@@ -4,6 +4,8 @@ import "gorm.io/gorm"
 
 type Property struct {
 	gorm.Model
+	Title               string              `grom:"title" json:"title"`
+	Owner               string              `gorm:"owner" json:"owner"`
 	Address             string              `gorm:"address" json:"address"`
 	BuildingArea        string              `gorm:"building_area" json:"building_area"`
 	LandArea            string              `gorm:"land_area" json:"land_area"`

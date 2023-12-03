@@ -38,6 +38,8 @@ func SeedData(db *gorm.DB) {
 		LandArea:            "200 m",
 		ElectricityCapacity: 1300,
 		WaterSource:         "Jetpam Sanyo",
+		Owner:               "Arba",
+		Title:               "Rumah Bekasi murah dan mantaps",
 		Bedrooms:            3,
 		Price:               1500000000.0,
 		Latitude:            "0.3234293",
