@@ -7,15 +7,6 @@ import (
 )
 
 func SeedData(db *gorm.DB) {
-	roadAccess := []models.RoadAccess{
-		{Name: "2 Roda", Description: "Akses 2 Roda"},
-		{Name: "4 Roda", Description: "Akses 4 Roda"},
-	}
-
-	if err := db.Create(&roadAccess).Error; err != nil {
-		panic(err)
-	}
-
 	sellingStatus := []models.SellingStatus{
 		{Name: "Penjualan Sukarela", Description: "Description for Penjualan Sukarela"},
 		{Name: "Lelang", Description: "Description for Lelang"},
@@ -47,9 +38,9 @@ func SeedData(db *gorm.DB) {
 		SellingStatusID:     &firstSellingStatus.ID,
 		PropertyTaxPhoto:    "https://placekitten.com/g/500/300",
 		Description:         "A beautiful property for sale",
-		RoadAccess: []*models.RoadAccess{
-			&roadAccess[0],
-			&roadAccess[1],
+		RoadAccess: models.RoadAccess{
+			IsSupportTwoRoad:  true,
+			IsSupportFourRoad: true,
 		},
 		PhotoHouse: []*models.PhotoHouse{
 			{PhotoUrl: "https://placekitten.com/g/500/300"},

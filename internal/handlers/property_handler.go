@@ -16,6 +16,7 @@ type IPropertyHandler interface {
 	GetById(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Delete(ctx *gin.Context)
+	GetByCategory(ctx *gin.Context)
 }
 
 type PropertyHandler struct {
@@ -111,4 +112,8 @@ func (h *PropertyHandler) Delete(ctx *gin.Context) {
 	}
 
 	helpers.SuccessResponse(ctx, nil, "Property successfully deleted")
+}
+
+func (h *PropertyHandler) GetByCategory(ctx *gin.Context) {
+
 }

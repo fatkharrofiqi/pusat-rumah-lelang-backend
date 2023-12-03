@@ -18,7 +18,7 @@ type Property struct {
 	Price               float64             `gorm:"price" json:"price"`
 	SellingStatusID     *uint               `gorm:"selling_status_id" json:"selling_status_id"`
 	SellingStatus       *SellingStatus      `json:"selling_status"`
-	RoadAccess          []*RoadAccess       `gorm:"many2many:property_road;" json:"road_access"`
+	RoadAccess          RoadAccess          `gorm:"road_access;" json:"road_access"`
 	Description         string              `gorm:"description" json:"description"`
 	PhotoHouse          []*PhotoHouse       `gorm:"photo_house" json:"photo_houses"`
 	PhotoCertificate    []*PhotoCertificate `gorm:"photo_certificate" json:"photo_certificates"`

@@ -10,8 +10,8 @@ import (
 func RunMigrations(db *gorm.DB) error {
 	return db.AutoMigrate(
 		&models.SellingStatus{},
-		&models.RoadAccess{},
 		&models.Property{},
+		&models.RoadAccess{},
 		&models.PhotoHouse{},
 		&models.PhotoCertificate{},
 	)
