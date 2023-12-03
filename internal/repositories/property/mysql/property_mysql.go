@@ -37,7 +37,7 @@ func (r *PropertyMysql) Delete(id int64) error {
 
 func (r *PropertyMysql) GetAll() ([]models.Property, error) {
 	var Propertys []models.Property
-	if err := r.DB.Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Find(&Propertys).Error; err != nil {
+	if err := r.DB.Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").Find(&Propertys).Error; err != nil {
 		return nil, err
 	}
 
@@ -46,7 +46,7 @@ func (r *PropertyMysql) GetAll() ([]models.Property, error) {
 
 func (r *PropertyMysql) GetById(id int64) (models.Property, error) {
 	property := models.Property{}
-	if err := r.DB.Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").First(&property, id).Error; err != nil {
+	if err := r.DB.Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").First(&property, id).Error; err != nil {
 		return property, err
 	}
 
