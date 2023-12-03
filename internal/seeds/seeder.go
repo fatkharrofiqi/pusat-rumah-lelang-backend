@@ -7,6 +7,15 @@ import (
 )
 
 func SeedData(db *gorm.DB) {
+	roadAccess := []models.RoadAccess{
+		{Name: "2 Roda", Description: "Akses 2 Roda"},
+		{Name: "4 Roda", Description: "Akses 4 Roda"},
+	}
+
+	if err := db.Create(&roadAccess).Error; err != nil {
+		panic(err)
+	}
+
 	sellingStatus := []models.SellingStatus{
 		{Name: "Penjualan Sukarela", Description: "Description for Penjualan Sukarela"},
 		{Name: "Lelang", Description: "Description for Lelang"},
@@ -15,7 +24,7 @@ func SeedData(db *gorm.DB) {
 	}
 
 	if err := db.Create(&sellingStatus).Error; err != nil {
-		panic(err)
+		panic(err.Error)
 	}
 
 	firstSellingStatus := models.SellingStatus{}
@@ -29,7 +38,6 @@ func SeedData(db *gorm.DB) {
 		LandArea:            "200 m",
 		ElectricityCapacity: 1300,
 		WaterSource:         "Jetpam Sanyo",
-		RoadAccess:          "4 roda dan 2 roda",
 		Bedrooms:            3,
 		Price:               1500000000.0,
 		Latitude:            "0.3234293",
@@ -37,11 +45,15 @@ func SeedData(db *gorm.DB) {
 		SellingStatusID:     &firstSellingStatus.ID,
 		PropertyTaxPhoto:    "https://placekitten.com/g/500/300",
 		Description:         "A beautiful property for sale",
-		PhotoHouse: []models.PhotoHouse{
+		RoadAccess: []*models.RoadAccess{
+			&roadAccess[0],
+			&roadAccess[1],
+		},
+		PhotoHouse: []*models.PhotoHouse{
 			{PhotoUrl: "https://placekitten.com/g/500/300"},
 			{PhotoUrl: "https://placekitten.com/g/600/300"},
 		},
-		PhotoCertificate: []models.PhotoCertificate{
+		PhotoCertificate: []*models.PhotoCertificate{
 			{CertificateUrl: "https://placekitten.com/g/500/300"},
 			{CertificateUrl: "https://placekitten.com/g/400/200"},
 		},
