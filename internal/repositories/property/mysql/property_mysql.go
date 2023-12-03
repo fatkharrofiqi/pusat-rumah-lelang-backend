@@ -46,7 +46,7 @@ func (r *PropertyMysql) GetAll() ([]models.Property, error) {
 
 func (r *PropertyMysql) GetById(id int64) (models.Property, error) {
 	property := models.Property{}
-	if err := r.DB.First(&property, id).Error; err != nil {
+	if err := r.DB.Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").First(&property, id).Error; err != nil {
 		return property, err
 	}
 
