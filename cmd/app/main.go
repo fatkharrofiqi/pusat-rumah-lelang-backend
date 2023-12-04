@@ -7,7 +7,6 @@ import (
 	"pusat-rumah-lelang-backend/internal/handlers"
 	"pusat-rumah-lelang-backend/internal/repositories/property"
 	"pusat-rumah-lelang-backend/internal/usecase"
-	"pusat-rumah-lelang-backend/migrations"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,11 +15,6 @@ func main() {
 	db, err := internal.InitializeDatabase()
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	// Run the migration
-	if err := migrations.RunMigrations(db); err != nil {
-		panic("Failed to migrate table")
 	}
 
 	r := gin.Default()
