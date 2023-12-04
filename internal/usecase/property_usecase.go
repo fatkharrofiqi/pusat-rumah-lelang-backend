@@ -11,6 +11,7 @@ type IPropertyUsecase interface {
 	Delete(id int64) error
 	GetAll() ([]models.Property, error)
 	GetById(id int64) (models.Property, error)
+	GetByCategory(id int64) (models.Property, error)
 }
 
 type PropertyUsecase struct {
@@ -58,6 +59,15 @@ func (p *PropertyUsecase) GetAll() ([]models.Property, error) {
 
 func (p *PropertyUsecase) GetById(id int64) (models.Property, error) {
 	result, err := p.repo.GetById(id)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (p *PropertyUsecase) GetByCategory(id int64) (models.Property, error) {
+	result, err := p.repo.GetByCategory(id)
 	if err != nil {
 		return result, err
 	}

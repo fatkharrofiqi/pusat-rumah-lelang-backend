@@ -12,6 +12,7 @@ type IPropertyMysql interface {
 	Delete(id int64) error
 	GetAll() ([]models.Property, error)
 	GetById(id int64) (models.Property, error)
+	GetByCategory(id int64) (property models.Property, err error)
 }
 
 type PropertyMysql struct {
@@ -47,6 +48,14 @@ func (r *PropertyMysql) GetAll() ([]models.Property, error) {
 func (r *PropertyMysql) GetById(id int64) (models.Property, error) {
 	property := models.Property{}
 	if err := r.DB.Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").First(&property, id).Error; err != nil {
+		return property, err
+	}
+
+	return property, nil
+}
+
+func (r *PropertyMysql) GetByCategory(id int64) (property models.Property, err error) {
+	if err := r.DB.Where("selling_status_id = ?", id).Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").First(&property, id).Error; err != nil {
 		return property, err
 	}
 

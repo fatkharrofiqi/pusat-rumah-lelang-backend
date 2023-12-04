@@ -13,6 +13,7 @@ type IPropertyRepository interface {
 	GetById(id int64) (models.Property, error)
 	Update(id int64, data *models.Property) error
 	Delete(id int64) error
+	GetByCategory(id int64) (models.Property, error)
 }
 
 type PropertyRepository struct {
@@ -45,4 +46,8 @@ func (r *PropertyRepository) Update(id int64, data *models.Property) error {
 
 func (r *PropertyRepository) Delete(id int64) error {
 	return r.mysql.Delete(id)
+}
+
+func (r *PropertyRepository) GetByCategory(id int64) (models.Property, error) {
+	return r.mysql.GetByCategory(id)
 }

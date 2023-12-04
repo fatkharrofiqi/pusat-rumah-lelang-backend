@@ -29,13 +29,13 @@ func NewPropertyHandler(usecase usecase.IPropertyUsecase) IPropertyHandler {
 	}
 }
 
-func getPropertyID(ctx *gin.Context) (int64, error) {
-	propertyIdStr := ctx.Param("id")
-	propertyId, err := strconv.Atoi(propertyIdStr)
+func getID(ctx *gin.Context) (int64, error) {
+	idStr := ctx.Param("id")
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		return 0, err
 	}
-	return int64(propertyId), nil
+	return int64(id), nil
 }
 
 func (h *PropertyHandler) Create(ctx *gin.Context) {
@@ -63,7 +63,7 @@ func (h *PropertyHandler) GetAll(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) GetById(ctx *gin.Context) {
-	propertyId, err := getPropertyID(ctx)
+	propertyId, err := getID(ctx)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
 		return
@@ -79,7 +79,7 @@ func (h *PropertyHandler) GetById(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) Update(ctx *gin.Context) {
-	propertyId, err := getPropertyID(ctx)
+	propertyId, err := getID(ctx)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
 		return
@@ -100,7 +100,7 @@ func (h *PropertyHandler) Update(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) Delete(ctx *gin.Context) {
-	propertyId, err := getPropertyID(ctx)
+	propertyId, err := getID(ctx)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
 		return
@@ -115,5 +115,17 @@ func (h *PropertyHandler) Delete(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) GetByCategory(ctx *gin.Context) {
+	categoryId, err := getID(ctx)
+	if err != nil {
+		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
+		return
+	}
 
+	result, err := h.usecase.GetByCategory(int64(categoryId))
+	if err != nil {
+		helpers.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	helpers.SuccessResponse(ctx, result, "successfully retrieved")
 }

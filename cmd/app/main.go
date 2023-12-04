@@ -42,6 +42,7 @@ func main() {
 		propertyRoutes.GET("/:id", propertyHandler.GetById)
 		propertyRoutes.PUT("/:id", propertyHandler.Update)
 		propertyRoutes.DELETE("/:id", propertyHandler.Delete)
+		propertyRoutes.GET("/category/:id", propertyHandler.GetByCategory)
 	}
 
 	r.Run(":8080")
