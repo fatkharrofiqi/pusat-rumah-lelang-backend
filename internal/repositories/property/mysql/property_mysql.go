@@ -1,18 +1,15 @@
 package mysql
 
 import (
+	"pusat-rumah-lelang-backend/internal/common/interfaces"
 	"pusat-rumah-lelang-backend/internal/models"
 
 	"gorm.io/gorm"
 )
 
 type IPropertyMysql interface {
-	Create(*models.Property) error
-	Update(id int64, property *models.Property) error
-	Delete(id int64) error
-	GetAll() ([]models.Property, error)
-	GetById(id int64) (models.Property, error)
-	GetByCategory(id int64) (property models.Property, err error)
+	interfaces.IGenericResource[models.Property]
+	GetBySellingStatus(id int64) (property models.Property, err error)
 }
 
 type PropertyMysql struct {
@@ -54,7 +51,7 @@ func (r *PropertyMysql) GetById(id int64) (models.Property, error) {
 	return property, nil
 }
 
-func (r *PropertyMysql) GetByCategory(id int64) (property models.Property, err error) {
+func (r *PropertyMysql) GetBySellingStatus(id int64) (property models.Property, err error) {
 	if err := r.DB.Where("selling_status_id = ?", id).Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").First(&property, id).Error; err != nil {
 		return property, err
 	}

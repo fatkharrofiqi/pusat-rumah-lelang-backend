@@ -1,25 +1,27 @@
 package internal
 
 import (
+	"log"
+	"net/http"
 	"pusat-rumah-lelang-backend/config"
+	"pusat-rumah-lelang-backend/internal/routes"
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/gin-gonic/gin"
 )
 
-var DB *gorm.DB
-
-func InitializeDatabase() (*gorm.DB, error) {
-	config, err := config.LoadConfig()
+func App() {
+	db, err := config.InitializeDatabase()
 	if err != nil {
-		return nil, err
+		log.Fatalln(err)
 	}
 
-	dbURL := config.DBUser + ":" + config.DBPassword + "@(" + config.DBHost + ":" + config.DBPort + ")/" + config.DBName + "?charset=utf8&parseTime=True&loc=Local"
-	DB, err := gorm.Open(mysql.Open(dbURL), &gorm.Config{})
-	if err != nil {
-		return nil, err
-	}
+	r := gin.Default()
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, "API Pusat Rumah Lelang")
+	})
 
-	return DB, nil
+	routes.InitPropertyRoute(db, r)
+	routes.InitSellingStatusRoute(db, r)
+
+	r.Run(":8080")
 }

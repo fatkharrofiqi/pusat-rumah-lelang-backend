@@ -2,13 +2,13 @@ package main
 
 import (
 	"log"
-	"pusat-rumah-lelang-backend/internal"
+	"pusat-rumah-lelang-backend/config"
 	"pusat-rumah-lelang-backend/internal/seeds"
 	"pusat-rumah-lelang-backend/migrations"
 )
 
 func main() {
-	db, err := internal.InitializeDatabase()
+	db, err := config.InitializeDatabase()
 	if err != nil {
 		log.Fatalln(err)
 	}

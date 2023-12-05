@@ -1,17 +1,14 @@
 package usecase
 
 import (
+	"pusat-rumah-lelang-backend/internal/common/interfaces"
 	"pusat-rumah-lelang-backend/internal/models"
 	"pusat-rumah-lelang-backend/internal/repositories/property"
 )
 
 type IPropertyUsecase interface {
-	Create(property *models.Property) error
-	Update(id int64, property *models.Property) error
-	Delete(id int64) error
-	GetAll() ([]models.Property, error)
-	GetById(id int64) (models.Property, error)
-	GetByCategory(id int64) (models.Property, error)
+	interfaces.IGenericResource[models.Property]
+	GetBySellingStatus(id int64) (models.Property, error)
 }
 
 type PropertyUsecase struct {
@@ -66,8 +63,8 @@ func (p *PropertyUsecase) GetById(id int64) (models.Property, error) {
 	return result, nil
 }
 
-func (p *PropertyUsecase) GetByCategory(id int64) (models.Property, error) {
-	result, err := p.repo.GetByCategory(id)
+func (p *PropertyUsecase) GetBySellingStatus(id int64) (models.Property, error) {
+	result, err := p.repo.GetBySellingStatus(id)
 	if err != nil {
 		return result, err
 	}

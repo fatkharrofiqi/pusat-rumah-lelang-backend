@@ -7,6 +7,16 @@ import (
 )
 
 func SeedData(db *gorm.DB) {
+
+	bank := []models.Bank{
+		{Name: "Bank Bintara", Description: "Bank Bintara"},
+		{Name: "Bank ABC", Description: "Bank Bintara"},
+	}
+
+	if err := db.Create(&bank).Error; err != nil {
+		panic(err.Error)
+	}
+
 	sellingStatus := []models.SellingStatus{
 		{Name: "Penjualan Sukarela", Description: "Description for Penjualan Sukarela"},
 		{Name: "Lelang", Description: "Description for Lelang"},
@@ -35,6 +45,7 @@ func SeedData(db *gorm.DB) {
 		Price:               1500000000.0,
 		Latitude:            "0.3234293",
 		Longitude:           "02939283",
+		BankID:              &bank[0].ID,
 		SellingStatusID:     &firstSellingStatus.ID,
 		PropertyTaxPhoto:    "https://placekitten.com/g/500/300",
 		Description:         "A beautiful property for sale",

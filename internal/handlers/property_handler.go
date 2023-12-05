@@ -3,20 +3,16 @@ package handlers
 import (
 	"net/http"
 	"pusat-rumah-lelang-backend/helpers"
+	"pusat-rumah-lelang-backend/internal/common/interfaces"
 	"pusat-rumah-lelang-backend/internal/models"
 	"pusat-rumah-lelang-backend/internal/usecase"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type IPropertyHandler interface {
-	Create(ctx *gin.Context)
-	GetAll(ctx *gin.Context)
-	GetById(ctx *gin.Context)
-	Update(ctx *gin.Context)
-	Delete(ctx *gin.Context)
-	GetByCategory(ctx *gin.Context)
+	interfaces.IResourceHandler
+	GetBySellingStatus(ctx *gin.Context)
 }
 
 type PropertyHandler struct {
@@ -27,15 +23,6 @@ func NewPropertyHandler(usecase usecase.IPropertyUsecase) IPropertyHandler {
 	return &PropertyHandler{
 		usecase: usecase,
 	}
-}
-
-func getID(ctx *gin.Context) (int64, error) {
-	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		return 0, err
-	}
-	return int64(id), nil
 }
 
 func (h *PropertyHandler) Create(ctx *gin.Context) {
@@ -63,7 +50,7 @@ func (h *PropertyHandler) GetAll(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) GetById(ctx *gin.Context) {
-	propertyId, err := getID(ctx)
+	propertyId, err := helpers.GetID(ctx)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
 		return
@@ -79,7 +66,7 @@ func (h *PropertyHandler) GetById(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) Update(ctx *gin.Context) {
-	propertyId, err := getID(ctx)
+	propertyId, err := helpers.GetID(ctx)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
 		return
@@ -100,7 +87,7 @@ func (h *PropertyHandler) Update(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) Delete(ctx *gin.Context) {
-	propertyId, err := getID(ctx)
+	propertyId, err := helpers.GetID(ctx)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
 		return
@@ -114,14 +101,14 @@ func (h *PropertyHandler) Delete(ctx *gin.Context) {
 	helpers.SuccessResponse(ctx, nil, "Property successfully deleted")
 }
 
-func (h *PropertyHandler) GetByCategory(ctx *gin.Context) {
-	categoryId, err := getID(ctx)
+func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
+	categoryId, err := helpers.GetID(ctx)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
 		return
 	}
 
-	result, err := h.usecase.GetByCategory(int64(categoryId))
+	result, err := h.usecase.GetBySellingStatus(int64(categoryId))
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return

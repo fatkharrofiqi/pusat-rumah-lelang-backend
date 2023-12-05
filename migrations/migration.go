@@ -9,6 +9,7 @@ import (
 // migrates table.
 func RunMigrations(db *gorm.DB) error {
 	return db.AutoMigrate(
+		&models.Bank{},
 		&models.SellingStatus{},
 		&models.Property{},
 		&models.RoadAccess{},
