@@ -62,9 +62,6 @@ func (r *PropertyMysql) GetBySellingStatus(id int64) (property []models.Property
 
 func (r *PropertyMysql) GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error) {
 	properties := []models.Property{}
-	if radius == "" {
-		radius = "10"
-	}
 	sql := `SELECT
 						*,
 						(
