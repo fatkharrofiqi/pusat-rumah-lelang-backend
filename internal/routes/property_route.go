@@ -24,5 +24,6 @@ func InitPropertyRoute(db *gorm.DB, r *gin.Engine) {
 		propertyRoutes.PUT("/:id", propertyHandler.Update)
 		propertyRoutes.DELETE("/:id", propertyHandler.Delete)
 		propertyRoutes.GET("/selling_status/:id", propertyHandler.GetBySellingStatus)
+		propertyRoutes.GET("/location", propertyHandler.GetByLocation)
 	}
 }

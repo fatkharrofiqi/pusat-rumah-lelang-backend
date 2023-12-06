@@ -10,6 +10,7 @@ import (
 type IPropertyMysql interface {
 	interfaces.IGenericResource[models.Property]
 	GetBySellingStatus(id int64) (property models.Property, err error)
+	GetByLocation(latitude string, longitude string) ([]models.Property, error)
 }
 
 type PropertyMysql struct {
@@ -57,4 +58,13 @@ func (r *PropertyMysql) GetBySellingStatus(id int64) (property models.Property, 
 	}
 
 	return property, nil
+}
+
+func (r *PropertyMysql) GetByLocation(latitude string, longitude string) ([]models.Property, error) {
+	properties := []models.Property{}
+	if err := r.DB.Where("latitude = ?", latitude).Where("longitude = ?", longitude).Find(&properties).Error; err != nil {
+		return properties, err
+	}
+
+	return properties, nil
 }

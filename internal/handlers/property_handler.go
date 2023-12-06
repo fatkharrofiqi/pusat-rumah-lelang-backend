@@ -13,6 +13,7 @@ import (
 type IPropertyHandler interface {
 	interfaces.IResourceHandler
 	GetBySellingStatus(ctx *gin.Context)
+	GetByLocation(ctx *gin.Context)
 }
 
 type PropertyHandler struct {
@@ -115,4 +116,17 @@ func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
 	}
 
 	helpers.SuccessResponse(ctx, result, "successfully retrieved")
+}
+
+func (h *PropertyHandler) GetByLocation(c *gin.Context) {
+	latitude := c.DefaultQuery("latitude", "0")
+	longitude := c.DefaultQuery("longitude", "0")
+
+	results, err := h.usecase.GetByLocation(latitude, longitude)
+	if err != nil {
+		helpers.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	helpers.SuccessResponse(c, results, "successfully retrieved")
 }

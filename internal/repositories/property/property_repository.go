@@ -1,6 +1,7 @@
 package property
 
 import (
+	"pusat-rumah-lelang-backend/internal/common/interfaces"
 	"pusat-rumah-lelang-backend/internal/models"
 	"pusat-rumah-lelang-backend/internal/repositories/property/mysql"
 
@@ -8,12 +9,9 @@ import (
 )
 
 type IPropertyRepository interface {
-	Create(data *models.Property) error
-	GetAll() ([]models.Property, error)
-	GetById(id int64) (models.Property, error)
-	Update(id int64, data *models.Property) error
-	Delete(id int64) error
+	interfaces.IGenericResource[models.Property]
 	GetBySellingStatus(id int64) (models.Property, error)
+	GetByLocation(latitude string, longitude string) ([]models.Property, error)
 }
 
 type PropertyRepository struct {
@@ -50,4 +48,8 @@ func (r *PropertyRepository) Delete(id int64) error {
 
 func (r *PropertyRepository) GetBySellingStatus(id int64) (models.Property, error) {
 	return r.mysql.GetBySellingStatus(id)
+}
+
+func (r *PropertyRepository) GetByLocation(latitude string, longitude string) ([]models.Property, error) {
+	return r.mysql.GetByLocation(latitude, longitude)
 }
