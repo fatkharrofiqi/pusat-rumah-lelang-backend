@@ -1,19 +1,15 @@
 package main
 
 import (
-	"log"
 	"pusat-rumah-lelang-backend/config"
-	"pusat-rumah-lelang-backend/internal/seeds"
 	"pusat-rumah-lelang-backend/migrations"
+	"pusat-rumah-lelang-backend/seeder"
 )
 
 func main() {
-	db, err := config.InitializeDatabase()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	db := config.OpenDB()
 
 	migrations.RunMigrations(db)
 
-	seeds.SeedData(db)
+	seeder.Seeds(db)
 }

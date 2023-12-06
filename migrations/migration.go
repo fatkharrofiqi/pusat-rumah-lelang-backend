@@ -1,7 +1,7 @@
 package migrations
 
 import (
-	"pusat-rumah-lelang-backend/internal/models"
+	"pusat-rumah-lelang-backend/models"
 
 	"gorm.io/gorm"
 )
