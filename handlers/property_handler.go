@@ -121,8 +121,9 @@ func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
 func (h *PropertyHandler) GetByLocation(c *gin.Context) {
 	latitude := c.DefaultQuery("latitude", "0")
 	longitude := c.DefaultQuery("longitude", "0")
+	radius := c.DefaultQuery("radius", "")
 
-	results, err := h.usecase.GetByLocation(latitude, longitude)
+	results, err := h.usecase.GetByLocation(latitude, longitude, radius)
 	if err != nil {
 		helpers.ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

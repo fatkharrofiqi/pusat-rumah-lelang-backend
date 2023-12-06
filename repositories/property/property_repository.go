@@ -11,7 +11,7 @@ import (
 type IPropertyRepository interface {
 	interfaces.IGenericResource[models.Property]
 	GetBySellingStatus(id int64) ([]models.Property, error)
-	GetByLocation(latitude string, longitude string) ([]models.Property, error)
+	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 }
 
 type PropertyRepository struct {
@@ -50,6 +50,6 @@ func (r *PropertyRepository) GetBySellingStatus(id int64) ([]models.Property, er
 	return r.mysql.GetBySellingStatus(id)
 }
 
-func (r *PropertyRepository) GetByLocation(latitude string, longitude string) ([]models.Property, error) {
-	return r.mysql.GetByLocation(latitude, longitude)
+func (r *PropertyRepository) GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error) {
+	return r.mysql.GetByLocation(latitude, longitude, radius)
 }

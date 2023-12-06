@@ -9,7 +9,7 @@ import (
 type IPropertyUsecase interface {
 	interfaces.IGenericResource[models.Property]
 	GetBySellingStatus(id int64) ([]models.Property, error)
-	GetByLocation(latitude string, longitude string) ([]models.Property, error)
+	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 }
 
 type PropertyUsecase struct {
@@ -73,8 +73,8 @@ func (p *PropertyUsecase) GetBySellingStatus(id int64) ([]models.Property, error
 	return results, nil
 }
 
-func (p *PropertyUsecase) GetByLocation(latitude string, longitude string) ([]models.Property, error) {
-	result, err := p.repo.GetByLocation(latitude, longitude)
+func (p *PropertyUsecase) GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error) {
+	result, err := p.repo.GetByLocation(latitude, longitude, radius)
 	if err != nil {
 		return result, err
 	}

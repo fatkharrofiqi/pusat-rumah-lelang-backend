@@ -12,29 +12,29 @@ type ISellingStatusMysql interface {
 }
 
 type SellingStatusMysql struct {
-	DB *gorm.DB
+	db *gorm.DB
 }
 
 func NewSellingStatusMysql(db *gorm.DB) ISellingStatusMysql {
-	return &SellingStatusMysql{DB: db}
+	return &SellingStatusMysql{db: db}
 }
 
 func (mysql *SellingStatusMysql) Create(sellingStatus *models.SellingStatus) error {
-	return mysql.DB.Create(sellingStatus).Error
+	return mysql.db.Create(sellingStatus).Error
 }
 
 func (mysql *SellingStatusMysql) Update(id int64, updatingStatus *models.SellingStatus) error {
-	return mysql.DB.Where("id = ?", id).Save(updatingStatus).Error
+	return mysql.db.Where("id = ?", id).Save(updatingStatus).Error
 }
 
 func (mysql *SellingStatusMysql) Delete(id int64) error {
 	data := &models.SellingStatus{}
-	return mysql.DB.Where("id = ?", id).Delete(data).Error
+	return mysql.db.Where("id = ?", id).Delete(data).Error
 }
 
 func (mysql *SellingStatusMysql) GetAll() ([]models.SellingStatus, error) {
 	data := []models.SellingStatus{}
-	if err := mysql.DB.Preload("Property").Find(&data).Error; err != nil {
+	if err := mysql.db.Preload("Property").Find(&data).Error; err != nil {
 		return nil, err
 	}
 
@@ -43,7 +43,7 @@ func (mysql *SellingStatusMysql) GetAll() ([]models.SellingStatus, error) {
 
 func (mysql *SellingStatusMysql) GetById(id int64) (models.SellingStatus, error) {
 	data := models.SellingStatus{}
-	if err := mysql.DB.Where("id = ?", id).Find(&data).Error; err != nil {
+	if err := mysql.db.Where("id = ?", id).Find(&data).Error; err != nil {
 		return data, err
 	}
 
