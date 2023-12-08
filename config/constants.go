@@ -13,4 +13,5 @@ func LoadConstant() {
 	constants.DBUser = os.Getenv("DB_USER")
 
 	constants.ServerPort = os.Getenv("SERVER_PORT")
+	constants.PasswordMigration = os.Getenv("PASSWORD_MIGRATION")
 }

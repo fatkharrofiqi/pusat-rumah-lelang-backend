@@ -2,6 +2,7 @@ package config
 
 import (
 	"pusat-rumah-lelang-backend/repositories/bank"
+	"pusat-rumah-lelang-backend/repositories/migration"
 	"pusat-rumah-lelang-backend/repositories/property"
 	"pusat-rumah-lelang-backend/repositories/sellingstatus"
 )
@@ -10,6 +11,7 @@ type Repository struct {
 	bank          bank.IBankRepository
 	sellingStatus sellingstatus.ISellingStatusRepository
 	property      property.IPropertyRepository
+	migrate       migration.IMigrationRepository
 }
 
 func InitRepository() *Repository {
@@ -19,5 +21,6 @@ func InitRepository() *Repository {
 		bank:          bank.NewBankRepository(db),
 		property:      property.NewPropertyRepository(db),
 		sellingStatus: sellingstatus.NewSellingStatusRepository(db),
+		migrate:       migration.NewMigrationRepository(db),
 	}
 }

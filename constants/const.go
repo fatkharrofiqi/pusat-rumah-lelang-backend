@@ -8,4 +8,6 @@ var (
 	DBName     string
 
 	ServerPort string
+
+	PasswordMigration string
 )

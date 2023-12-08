@@ -38,5 +38,10 @@ func InitRoute(handler *Handler) {
 		bankRoutes.GET("/", handler.bank.GetAll)
 	}
 
+	migrateRoute := r.Group("/migrate")
+	{
+		migrateRoute.GET("/", handler.migrate.Migrate)
+	}
+
 	r.Run(":" + constants.ServerPort)
 }

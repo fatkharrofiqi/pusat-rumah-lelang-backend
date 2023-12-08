@@ -6,6 +6,7 @@ type Handler struct {
 	property      handlers.IPropertyHandler
 	sellingStatus handlers.ISellingStatusHandler
 	bank          handlers.IBankHandler
+	migrate       handlers.IMigrationHandler
 }
 
 func InitHandlers(usecase *Usecase) *Handler {
@@ -13,5 +14,6 @@ func InitHandlers(usecase *Usecase) *Handler {
 		property:      handlers.NewPropertyHandler(usecase.property),
 		bank:          handlers.NewBankHandler(usecase.bank),
 		sellingStatus: handlers.NewSellingStatusHandler(usecase.sellingStatus),
+		migrate:       handlers.NewMigrationHandler(usecase.migrate),
 	}
 }

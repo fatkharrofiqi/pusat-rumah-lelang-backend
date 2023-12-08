@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	config.LoadEnv()
+	config.LoadConstant()
 	db := config.OpenDB()
 
 	migrations.RunMigrations(db)
