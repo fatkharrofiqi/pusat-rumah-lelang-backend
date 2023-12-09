@@ -34,8 +34,8 @@ func (repo *SellingStatusRepository) Delete(id int64) error {
 	return repo.mysql.Delete(id)
 }
 
-func (repo *SellingStatusRepository) GetAll() ([]models.SellingStatus, error) {
-	return repo.mysql.GetAll()
+func (repo *SellingStatusRepository) GetAll(page, pageSize int) ([]models.SellingStatus, error) {
+	return repo.mysql.GetAll(page, pageSize)
 }
 
 func (repo *SellingStatusRepository) GetById(id int64) (models.SellingStatus, error) {

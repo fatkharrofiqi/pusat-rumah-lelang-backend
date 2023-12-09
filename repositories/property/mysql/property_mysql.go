@@ -34,13 +34,22 @@ func (r *PropertyMysql) Delete(id int64) error {
 	return r.db.Where("id = ?", id).Delete(data).Error
 }
 
-func (r *PropertyMysql) GetAll() ([]models.Property, error) {
-	var Propertys []models.Property
-	if err := r.db.Preload("Bank").Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").Find(&Propertys).Error; err != nil {
+func (r *PropertyMysql) GetAll(page, pageSize int) ([]models.Property, error) {
+	var properties []models.Property
+	offset := (page - 1) * pageSize
+
+	if err := r.db.Preload("Bank").
+		Preload("SellingStatus").
+		Preload("PhotoHouse").
+		Preload("PhotoCertificate").
+		Preload("RoadAccess").
+		Limit(pageSize).
+		Offset(offset).
+		Find(&properties).Error; err != nil {
 		return nil, err
 	}
 
-	return Propertys, nil
+	return properties, nil
 }
 
 func (r *PropertyMysql) GetById(id int64) (models.Property, error) {

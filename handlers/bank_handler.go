@@ -22,7 +22,11 @@ func NewBankHandler(usecase usecases.IBankUsecase) IBankHandler {
 }
 
 func (h *BankHandler) GetAll(c *gin.Context) {
-	result, err := h.usecase.GetAll()
+	pagination, err := helpers.ParsePaginationParams(c)
+	if err != nil {
+		helpers.ErrorResponse(c, http.StatusInternalServerError, "Invalid param")
+	}
+	result, err := h.usecase.GetAll(pagination.Page, pagination.PageSize)
 	if err != nil {
 		helpers.ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

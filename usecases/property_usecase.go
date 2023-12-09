@@ -46,8 +46,8 @@ func (p *PropertyUsecase) Delete(id int64) error {
 	return nil
 }
 
-func (p *PropertyUsecase) GetAll() ([]models.Property, error) {
-	result, err := p.repo.GetAll()
+func (p *PropertyUsecase) GetAll(page, pageSize int) ([]models.Property, error) {
+	result, err := p.repo.GetAll(page, pageSize)
 	if err != nil {
 		return result, err
 	}

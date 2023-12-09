@@ -38,9 +38,13 @@ func (h *SellingStatusHandler) Create(ctx *gin.Context) {
 }
 
 func (h *SellingStatusHandler) GetAll(ctx *gin.Context) {
-	result, err := h.usecase.GetAll()
+	pagination, err := helpers.ParsePaginationParams(ctx)
 	if err != nil {
-		helpers.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		helpers.ErrorResponse(ctx, http.StatusInternalServerError, "Invalid param")
+	}
+	result, err := h.usecase.GetAll(pagination.Page, pagination.PageSize)
+	if err != nil {
+		helpers.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to fetch selling status")
 		return
 	}
 	helpers.SuccessResponse(ctx, result, "success")

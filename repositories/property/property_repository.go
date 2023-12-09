@@ -30,8 +30,8 @@ func (r *PropertyRepository) Create(data *models.Property) error {
 	return r.mysql.Create(data)
 }
 
-func (r *PropertyRepository) GetAll() ([]models.Property, error) {
-	return r.mysql.GetAll()
+func (r *PropertyRepository) GetAll(page, pageSize int) ([]models.Property, error) {
+	return r.mysql.GetAll(page, pageSize)
 }
 
 func (r *PropertyRepository) GetById(id int64) (models.Property, error) {

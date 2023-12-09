@@ -19,9 +19,13 @@ func NewBankMysql(db *gorm.DB) IBankMysql {
 	return &BankMysql{DB: db}
 }
 
-func (db *BankMysql) GetAll() ([]models.Bank, error) {
+func (db *BankMysql) GetAll(page, pageSize int) ([]models.Bank, error) {
 	bank := []models.Bank{}
-	if err := db.DB.Find(&bank).Error; err != nil {
+	offset := (page - 1) * pageSize
+	if err := db.DB.
+		Limit(pageSize).
+		Offset(offset).
+		Find(&bank).Error; err != nil {
 		return bank, err
 	}
 

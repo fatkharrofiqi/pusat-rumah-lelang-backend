@@ -42,7 +42,11 @@ func (h *PropertyHandler) Create(ctx *gin.Context) {
 }
 
 func (h *PropertyHandler) GetAll(ctx *gin.Context) {
-	result, err := h.usecase.GetAll()
+	pagination, err := helpers.ParsePaginationParams(ctx)
+	if err != nil {
+		helpers.ErrorResponse(ctx, http.StatusInternalServerError, "Invalid param")
+	}
+	result, err := h.usecase.GetAll(pagination.Page, pagination.PageSize)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return

@@ -30,8 +30,8 @@ func (u *SellingStatusUsecase) Delete(id int64) error {
 	return u.repo.Delete(id)
 }
 
-func (u *SellingStatusUsecase) GetAll() ([]models.SellingStatus, error) {
-	results, err := u.repo.GetAll()
+func (u *SellingStatusUsecase) GetAll(page, pageSize int) ([]models.SellingStatus, error) {
+	results, err := u.repo.GetAll(page, pageSize)
 	if err != nil {
 		return results, err
 	}

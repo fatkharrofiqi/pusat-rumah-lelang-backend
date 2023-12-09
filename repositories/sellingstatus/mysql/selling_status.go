@@ -32,13 +32,18 @@ func (mysql *SellingStatusMysql) Delete(id int64) error {
 	return mysql.db.Where("id = ?", id).Delete(data).Error
 }
 
-func (mysql *SellingStatusMysql) GetAll() ([]models.SellingStatus, error) {
-	data := []models.SellingStatus{}
-	if err := mysql.db.Preload("Property").Find(&data).Error; err != nil {
+func (mysql *SellingStatusMysql) GetAll(page, pageSize int) ([]models.SellingStatus, error) {
+	sellingStatuses := []models.SellingStatus{}
+	offset := (page - 1) * pageSize
+	if err := mysql.db.
+		Preload("Property").
+		Limit(pageSize).
+		Offset(offset).
+		Find(&sellingStatuses).Error; err != nil {
 		return nil, err
 	}
 
-	return data, nil
+	return sellingStatuses, nil
 }
 
 func (mysql *SellingStatusMysql) GetById(id int64) (models.SellingStatus, error) {

@@ -24,6 +24,6 @@ func NewBankRepository(db *gorm.DB) IBankRepository {
 	}
 }
 
-func (r *BankRepository) GetAll() ([]models.Bank, error) {
-	return r.mysql.GetAll()
+func (r *BankRepository) GetAll(page, pageSize int) ([]models.Bank, error) {
+	return r.mysql.GetAll(page, pageSize)
 }

@@ -20,6 +20,6 @@ func NewBankUsecase(repo bank.IBankRepository) IBankUsecase {
 	}
 }
 
-func (b *BankUsecase) GetAll() ([]models.Bank, error) {
-	return b.repo.GetAll()
+func (b *BankUsecase) GetAll(page, pageSize int) ([]models.Bank, error) {
+	return b.repo.GetAll(page, pageSize)
 }
