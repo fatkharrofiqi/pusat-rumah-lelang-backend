@@ -6,8 +6,6 @@ WORKDIR /app
 
 COPY . .
 
-COPY .env .
-
 RUN go build -o main .
 
 EXPOSE 8080

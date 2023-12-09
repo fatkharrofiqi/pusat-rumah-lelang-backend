@@ -10,7 +10,7 @@ import (
 
 type IPropertyMysql interface {
 	interfaces.IGenericResource[models.Property]
-	GetBySellingStatus(id int64) (property []models.Property, err error)
+	GetBySellingStatus(id int64, page, pageSize int) (property []models.Property, err error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 	GetTotalByCategory(category string) (result []models.NameCount, err error)
 }
@@ -85,8 +85,17 @@ func (r *PropertyMysql) GetById(id int64) (models.Property, error) {
 	return property, nil
 }
 
-func (r *PropertyMysql) GetBySellingStatus(id int64) (property []models.Property, err error) {
-	if err := r.db.Where("selling_status_id = ?", id).Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").Find(&property, id).Error; err != nil {
+func (r *PropertyMysql) GetBySellingStatus(id int64, page, pageSize int) (property []models.Property, err error) {
+	offset := (page - 1) * pageSize
+	if err := r.db.
+		Where("selling_status_id = ?", id).
+		Preload("SellingStatus").
+		Preload("PhotoHouse").
+		Preload("PhotoCertificate").
+		Preload("RoadAccess").
+		Limit(pageSize).
+		Offset(offset).
+		Find(&property).Error; err != nil {
 		return property, err
 	}
 

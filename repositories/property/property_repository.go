@@ -10,7 +10,7 @@ import (
 
 type IPropertyRepository interface {
 	interfaces.IGenericResource[models.Property]
-	GetBySellingStatus(id int64) ([]models.Property, error)
+	GetBySellingStatus(id int64, page, pageSize int) ([]models.Property, error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 	GetTotalByCategory(category string) (result []models.NameCount, err error)
 }
@@ -51,8 +51,8 @@ func (r *PropertyRepository) Delete(id int64) error {
 	return r.mysql.Delete(id)
 }
 
-func (r *PropertyRepository) GetBySellingStatus(id int64) ([]models.Property, error) {
-	return r.mysql.GetBySellingStatus(id)
+func (r *PropertyRepository) GetBySellingStatus(id int64, page, pageSize int) ([]models.Property, error) {
+	return r.mysql.GetBySellingStatus(id, page, pageSize)
 }
 
 func (r *PropertyRepository) GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error) {

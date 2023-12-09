@@ -131,7 +131,12 @@ func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
 		return
 	}
 
-	result, err := h.usecase.GetBySellingStatus(int64(categoryId))
+	pagination, err := helpers.ParsePaginationParams(ctx)
+	if err != nil {
+		helpers.ErrorResponse(ctx, http.StatusInternalServerError, "Invalid param")
+	}
+
+	result, err := h.usecase.GetBySellingStatus(int64(categoryId), pagination.Page, pagination.PageSize)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return

@@ -8,7 +8,7 @@ import (
 
 type IPropertyUsecase interface {
 	interfaces.IGenericResource[models.Property]
-	GetBySellingStatus(id int64) ([]models.Property, error)
+	GetBySellingStatus(id int64, page, pageSize int) ([]models.Property, error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 	GetTotalByCategory(category string) (result []models.NameCount, err error)
 }
@@ -69,8 +69,8 @@ func (p *PropertyUsecase) GetById(id int64) (models.Property, error) {
 	return result, nil
 }
 
-func (p *PropertyUsecase) GetBySellingStatus(id int64) ([]models.Property, error) {
-	results, err := p.repo.GetBySellingStatus(id)
+func (p *PropertyUsecase) GetBySellingStatus(id int64, page, pageSize int) ([]models.Property, error) {
+	results, err := p.repo.GetBySellingStatus(id, page, pageSize)
 	if err != nil {
 		return results, err
 	}
