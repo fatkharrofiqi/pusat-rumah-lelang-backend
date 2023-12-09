@@ -10,6 +10,7 @@ type IPropertyUsecase interface {
 	interfaces.IGenericResource[models.Property]
 	GetBySellingStatus(id int64) ([]models.Property, error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
+	GetTotalByCategory(category string) (result []models.NameCount, err error)
 }
 
 type PropertyUsecase struct {
@@ -20,6 +21,10 @@ func NewPropertyUsecase(repo property.IPropertyRepository) IPropertyUsecase {
 	return &PropertyUsecase{
 		repo: repo,
 	}
+}
+
+func (p *PropertyUsecase) GetTotalByCategory(category string) (result []models.NameCount, err error) {
+	return p.repo.GetTotalByCategory(category)
 }
 
 func (p *PropertyUsecase) Create(property *models.Property) error {

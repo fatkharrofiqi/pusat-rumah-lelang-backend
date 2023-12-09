@@ -12,6 +12,7 @@ type IPropertyRepository interface {
 	interfaces.IGenericResource[models.Property]
 	GetBySellingStatus(id int64) ([]models.Property, error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
+	GetTotalByCategory(category string) (result []models.NameCount, err error)
 }
 
 type PropertyRepository struct {
@@ -24,6 +25,10 @@ func NewPropertyRepository(mysqlDB *gorm.DB) IPropertyRepository {
 	return &PropertyRepository{
 		mysql: mysql,
 	}
+}
+
+func (r *PropertyRepository) GetTotalByCategory(category string) (result []models.NameCount, err error) {
+	return r.mysql.GetTotalByCategory(category)
 }
 
 func (r *PropertyRepository) Create(data *models.Property) error {

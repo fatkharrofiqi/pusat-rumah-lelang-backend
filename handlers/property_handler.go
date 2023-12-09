@@ -14,6 +14,7 @@ type IPropertyHandler interface {
 	interfaces.IResourceHandler
 	GetBySellingStatus(ctx *gin.Context)
 	GetByLocation(ctx *gin.Context)
+	GetTotalByCategory(ctx *gin.Context)
 }
 
 type PropertyHandler struct {
@@ -24,6 +25,23 @@ func NewPropertyHandler(usecase usecases.IPropertyUsecase) IPropertyHandler {
 	return &PropertyHandler{
 		usecase: usecase,
 	}
+}
+
+func (h *PropertyHandler) GetTotalByCategory(ctx *gin.Context) {
+	var response = make(map[string]interface{})
+	category := ctx.Param("category")
+	if category != "selling_status" && category != "bank" {
+		helpers.ErrorResponse(ctx, http.StatusBadRequest, "Invalid category")
+		return
+	}
+
+	result, err := h.usecase.GetTotalByCategory(category)
+	if err != nil {
+		helpers.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+	}
+
+	response[category] = result
+	helpers.SuccessResponse(ctx, response, "Success")
 }
 
 func (h *PropertyHandler) Create(ctx *gin.Context) {

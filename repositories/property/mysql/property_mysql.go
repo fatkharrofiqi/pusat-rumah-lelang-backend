@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"errors"
 	"pusat-rumah-lelang-backend/common/interfaces"
 	"pusat-rumah-lelang-backend/models"
 
@@ -11,6 +12,7 @@ type IPropertyMysql interface {
 	interfaces.IGenericResource[models.Property]
 	GetBySellingStatus(id int64) (property []models.Property, err error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
+	GetTotalByCategory(category string) (result []models.NameCount, err error)
 }
 
 type PropertyMysql struct {
@@ -19,6 +21,28 @@ type PropertyMysql struct {
 
 func NewPropertyMysql(db *gorm.DB) IPropertyMysql {
 	return &PropertyMysql{db: db}
+}
+
+func (r *PropertyMysql) GetTotalByCategory(category string) (result []models.NameCount, err error) {
+	var dynamicField string
+
+	switch category {
+	case "selling_status":
+		dynamicField = "selling_statuses"
+	case "bank":
+		dynamicField = "banks"
+	default:
+		return nil, errors.New("invalid category")
+	}
+
+	if err := r.db.Table("properties").
+		Select(dynamicField + ".name, COUNT(properties.id) as property_count").
+		Joins("LEFT JOIN " + dynamicField + " ON " + dynamicField + ".id = properties." + category + "_id").
+		Group("properties." + category + "_id, " + dynamicField + ".name").
+		Scan(&result).Error; err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func (r *PropertyMysql) Create(property *models.Property) error {

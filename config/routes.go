@@ -22,6 +22,7 @@ func InitRoute(handler *Handler) {
 		propertyRoutes.DELETE("/:id", handler.property.Delete)
 		propertyRoutes.GET("/selling_status/:id", handler.property.GetBySellingStatus)
 		propertyRoutes.GET("/location", handler.property.GetByLocation)
+		propertyRoutes.GET("/total/:category", handler.property.GetTotalByCategory)
 	}
 
 	sellingStatusRoutes := r.Group("/selling_status")
