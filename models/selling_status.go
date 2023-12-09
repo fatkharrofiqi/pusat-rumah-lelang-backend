@@ -13,5 +13,5 @@ type SellingStatus struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 	Name        string         `gorm:"name" json:"name"`
 	Description string         `gorm:"description" json:"description"`
-	Property    []*Property    `gorm:"property" json:"properties"`
+	Property    []*Property    `gorm:"property" json:"properties,omitempty"`
 }

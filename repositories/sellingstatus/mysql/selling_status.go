@@ -42,7 +42,6 @@ func (mysql *SellingStatusMysql) GetAll(page, pageSize int) ([]models.SellingSta
 	sellingStatuses := []models.SellingStatus{}
 	offset := (page - 1) * pageSize
 	if err := mysql.db.
-		Preload("Property").
 		Limit(pageSize).
 		Offset(offset).
 		Find(&sellingStatuses).Error; err != nil {

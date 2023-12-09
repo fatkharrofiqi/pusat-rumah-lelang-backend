@@ -36,7 +36,7 @@ func (r *PropertyMysql) GetTotalByCategory(category string) (result []models.Nam
 	}
 
 	if err := r.db.Table("properties").
-		Select(dynamicField + ".name, COUNT(properties.id) as property_count").
+		Select(dynamicField + ".name, " + dynamicField + ".id, COUNT(properties.id) as property_count").
 		Joins("LEFT JOIN " + dynamicField + " ON " + dynamicField + ".id = properties." + category + "_id").
 		Group("properties." + category + "_id, " + dynamicField + ".name").
 		Scan(&result).Error; err != nil {
