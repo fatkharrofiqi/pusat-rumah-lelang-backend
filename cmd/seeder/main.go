@@ -11,6 +11,7 @@ func main() {
 	config.LoadConstant()
 	db := config.OpenDB()
 
+	migrations.DropTable(db)
 	migrations.RunMigrations(db)
 
 	seeder.Seeds(db)

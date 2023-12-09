@@ -7,10 +7,16 @@ import (
 )
 
 func Seeds(db *gorm.DB) {
+	roadAccess := []models.RoadAccess{
+		{Name: "Roda 4", Description: "Roda 4"},
+		{Name: "Roda 2", Description: "Roda 2"},
+	}
+	if err := db.Create(&roadAccess).Error; err != nil {
+		panic(err.Error)
+	}
 
 	bank := []models.Bank{
-		{Name: "Bank Bintara", Description: "Bank Bintara"},
-		{Name: "Bank ABC", Description: "Bank Bintara"},
+		{Name: "BPR Bintara", Description: "BPR Bintara"},
 	}
 
 	if err := db.Create(&bank).Error; err != nil {
@@ -18,26 +24,22 @@ func Seeds(db *gorm.DB) {
 	}
 
 	sellingStatus := []models.SellingStatus{
-		{Name: "Penjualan Sukarela", Description: "Description for Penjualan Sukarela"},
+		{Name: "Suka Rela", Description: "Description for Suka Rela"},
 		{Name: "Lelang", Description: "Description for Lelang"},
 		{Name: "Ayda", Description: "Description for Ayda"},
-		{Name: "Jual Rumah Biasa", Description: "Description for Jual Rumah Biasa"},
+		{Name: "Rumah Biasa", Description: "Description for Rumah Biasa"},
 	}
 
 	if err := db.Create(&sellingStatus).Error; err != nil {
 		panic(err.Error)
 	}
 
-	firstSellingStatus := models.SellingStatus{}
-
-	db.First(&firstSellingStatus)
-
 	// Create a Property instance
 	property := models.Property{
 		Address:             "123 Main St",
 		BuildingArea:        "110 m",
 		LandArea:            "200 m",
-		ElectricityCapacity: 1300,
+		ElectricityCapacity: "1300 VA",
 		WaterSource:         "Jetpam Sanyo",
 		Owner:               "Arba",
 		Title:               "Rumah Bekasi murah dan mantaps",
@@ -46,13 +48,10 @@ func Seeds(db *gorm.DB) {
 		Latitude:            "0.3234293",
 		Longitude:           "02939283",
 		BankID:              &bank[0].ID,
-		SellingStatusID:     &firstSellingStatus.ID,
+		SellingStatusID:     &sellingStatus[0].ID,
 		PropertyTaxPhoto:    "https://placekitten.com/g/500/300",
 		Description:         "A beautiful property for sale",
-		RoadAccess: models.RoadAccess{
-			IsSupportTwoRoad:  true,
-			IsSupportFourRoad: true,
-		},
+		RoadAccessID:        &roadAccess[0].ID,
 		PhotoHouse: []*models.PhotoHouse{
 			{PhotoUrl: "https://placekitten.com/g/500/300"},
 			{PhotoUrl: "https://placekitten.com/g/600/300"},

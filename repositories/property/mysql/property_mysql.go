@@ -83,6 +83,7 @@ func (r *PropertyMysql) GetByLocation(latitude string, longitude string, radius 
 		Preload("SellingStatus").
 		Preload("PhotoHouse").
 		Preload("PhotoCertificate").
+		Preload("RoadAccess").
 		Find(&properties).Error; err != nil {
 		return properties, err
 	}

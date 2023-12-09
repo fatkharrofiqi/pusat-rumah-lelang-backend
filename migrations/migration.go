@@ -17,3 +17,12 @@ func RunMigrations(db *gorm.DB) error {
 		&models.PhotoCertificate{},
 	)
 }
+
+func DropTable(db *gorm.DB) error {
+	return db.Migrator().DropTable(&models.Bank{},
+		&models.SellingStatus{},
+		&models.Property{},
+		&models.RoadAccess{},
+		&models.PhotoHouse{},
+		&models.PhotoCertificate{})
+}

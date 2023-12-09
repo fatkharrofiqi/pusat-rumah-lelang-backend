@@ -19,7 +19,7 @@ type Property struct {
 	Latitude            string              `gorm:"latitude" json:"latitude"`
 	Longitude           string              `gorm:"longitude" json:"longitude"`
 	PropertyTaxPhoto    string              `gorm:"property_tax_photo" json:"property_tax"`
-	ElectricityCapacity int                 `gorm:"electricity_capacity" json:"electricity_capacity"`
+	ElectricityCapacity string              `gorm:"electricity_capacity" json:"electricity_capacity"`
 	WaterSource         string              `gorm:"water_source" json:"water_source"`
 	Bedrooms            int                 `gorm:"bedrooms" json:"bedrooms"`
 	Price               float64             `gorm:"price" json:"price"`
@@ -27,7 +27,8 @@ type Property struct {
 	SellingStatus       *SellingStatus      `json:"selling_status"`
 	BankID              *uint               `gorm:"bank_id" json:"bank_id"`
 	Bank                *Bank               `json:"bank"`
-	RoadAccess          RoadAccess          `gorm:"road_access;" json:"road_access"`
+	RoadAccessID        *uint               `gorm:"road_access_id;" json:"road_access_id"`
+	RoadAccess          *RoadAccess         `json:"road_access"`
 	Description         string              `gorm:"description" json:"description"`
 	PhotoHouse          []*PhotoHouse       `gorm:"photo_house" json:"photo_houses"`
 	PhotoCertificate    []*PhotoCertificate `gorm:"photo_certificate" json:"photo_certificates"`
