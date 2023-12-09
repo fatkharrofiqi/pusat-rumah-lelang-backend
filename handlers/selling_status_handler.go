@@ -12,6 +12,7 @@ import (
 
 type ISellingStatusHandler interface {
 	interfaces.IResourceHandler
+	Total(*gin.Context)
 }
 
 type SellingStatusHandler struct {
@@ -20,6 +21,10 @@ type SellingStatusHandler struct {
 
 func NewSellingStatusHandler(usecase usecases.ISellingStatusUsecase) ISellingStatusHandler {
 	return &SellingStatusHandler{usecase: usecase}
+}
+
+func (h *SellingStatusHandler) Total(ctx *gin.Context) {
+	helpers.SuccessResponse(ctx, h.usecase.Total(), "Total selling status")
 }
 
 func (h *SellingStatusHandler) Create(ctx *gin.Context) {

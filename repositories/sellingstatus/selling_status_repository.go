@@ -10,6 +10,7 @@ import (
 
 type ISellingStatusRepository interface {
 	interfaces.IGenericResource[models.SellingStatus]
+	Total() int64
 }
 
 type SellingStatusRepository struct {
@@ -20,6 +21,10 @@ func NewSellingStatusRepository(mysqlDB *gorm.DB) ISellingStatusRepository {
 	mysql := mysql.NewSellingStatusMysql(mysqlDB)
 
 	return &SellingStatusRepository{mysql: mysql}
+}
+
+func (repo *SellingStatusRepository) Total() int64 {
+	return repo.mysql.Total()
 }
 
 func (repo *SellingStatusRepository) Create(data *models.SellingStatus) error {

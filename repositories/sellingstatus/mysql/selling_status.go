@@ -9,6 +9,7 @@ import (
 
 type ISellingStatusMysql interface {
 	interfaces.IGenericResource[models.SellingStatus]
+	Total() (count int64)
 }
 
 type SellingStatusMysql struct {
@@ -17,6 +18,11 @@ type SellingStatusMysql struct {
 
 func NewSellingStatusMysql(db *gorm.DB) ISellingStatusMysql {
 	return &SellingStatusMysql{db: db}
+}
+
+func (mysql *SellingStatusMysql) Total() (count int64) {
+	mysql.db.Model(&models.SellingStatus{}).Count(&count)
+	return
 }
 
 func (mysql *SellingStatusMysql) Create(sellingStatus *models.SellingStatus) error {

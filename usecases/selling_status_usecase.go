@@ -8,6 +8,7 @@ import (
 
 type ISellingStatusUsecase interface {
 	interfaces.IGenericResource[models.SellingStatus]
+	Total() int64
 }
 
 type SellingStatusUsecase struct {
@@ -16,6 +17,10 @@ type SellingStatusUsecase struct {
 
 func NewSellingStatusUsecase(repo sellingstatus.ISellingStatusRepository) ISellingStatusUsecase {
 	return &SellingStatusUsecase{repo: repo}
+}
+
+func (u *SellingStatusUsecase) Total() int64 {
+	return u.repo.Total()
 }
 
 func (u *SellingStatusUsecase) Create(sellingStatus *models.SellingStatus) error {

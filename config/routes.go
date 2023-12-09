@@ -31,6 +31,7 @@ func InitRoute(handler *Handler) {
 		sellingStatusRoutes.GET("/:id", handler.sellingStatus.GetById)
 		sellingStatusRoutes.PUT("/:id", handler.sellingStatus.Update)
 		sellingStatusRoutes.DELETE("/:id", handler.sellingStatus.Delete)
+		sellingStatusRoutes.GET("/total", handler.sellingStatus.Total)
 	}
 
 	bankRoutes := r.Group("/bank")
