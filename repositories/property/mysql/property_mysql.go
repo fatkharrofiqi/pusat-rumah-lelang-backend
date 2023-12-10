@@ -35,10 +35,10 @@ func (r *PropertyMysql) GetTotalByCategory(category string) (result []models.Nam
 		return nil, errors.New("invalid category")
 	}
 
-	if err := r.db.Table("properties").
+	if err := r.db.Table(dynamicField).
 		Select(dynamicField + ".name, " + dynamicField + ".id, COUNT(properties.id) as property_count").
-		Joins("LEFT JOIN " + dynamicField + " ON " + dynamicField + ".id = properties." + category + "_id").
-		Group("properties." + category + "_id, " + dynamicField + ".name").
+		Joins("LEFT JOIN properties ON " + dynamicField + ".id = properties." + category + "_id").
+		Group(dynamicField + ".name").
 		Scan(&result).Error; err != nil {
 		return nil, err
 	}
