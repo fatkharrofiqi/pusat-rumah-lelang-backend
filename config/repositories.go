@@ -1,6 +1,7 @@
 package config
 
 import (
+	"pusat-rumah-lelang-backend/repositories/autocomplete"
 	"pusat-rumah-lelang-backend/repositories/bank"
 	"pusat-rumah-lelang-backend/repositories/migration"
 	"pusat-rumah-lelang-backend/repositories/property"
@@ -12,6 +13,7 @@ type Repository struct {
 	sellingStatus sellingstatus.ISellingStatusRepository
 	property      property.IPropertyRepository
 	migrate       migration.IMigrationRepository
+	autocomplete  autocomplete.IAutocompleteRepository
 }
 
 func InitRepository() *Repository {
@@ -22,5 +24,6 @@ func InitRepository() *Repository {
 		property:      property.NewPropertyRepository(db),
 		sellingStatus: sellingstatus.NewSellingStatusRepository(db),
 		migrate:       migration.NewMigrationRepository(db),
+		autocomplete:  autocomplete.NewAutocompleteRepository(db),
 	}
 }

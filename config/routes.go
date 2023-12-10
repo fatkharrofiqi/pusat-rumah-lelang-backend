@@ -45,5 +45,10 @@ func InitRoute(handler *Handler) {
 		migrateRoute.GET("/", handler.migrate.Migrate)
 	}
 
+	autoCompleteRoute := r.Group("/autocomplete")
+	{
+		autoCompleteRoute.GET("/property", handler.autocomplete.GetComboProperty)
+	}
+
 	r.Run(":" + constants.ServerPort)
 }

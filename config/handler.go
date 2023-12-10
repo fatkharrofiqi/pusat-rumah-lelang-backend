@@ -7,6 +7,7 @@ type Handler struct {
 	sellingStatus handlers.ISellingStatusHandler
 	bank          handlers.IBankHandler
 	migrate       handlers.IMigrationHandler
+	autocomplete  handlers.IAutocompleteHandler
 }
 
 func InitHandlers(usecase *Usecase) *Handler {
@@ -15,5 +16,6 @@ func InitHandlers(usecase *Usecase) *Handler {
 		bank:          handlers.NewBankHandler(usecase.bank),
 		sellingStatus: handlers.NewSellingStatusHandler(usecase.sellingStatus),
 		migrate:       handlers.NewMigrationHandler(usecase.migrate),
+		autocomplete:  handlers.NewAutocompleteHandler(usecase.autocomplete),
 	}
 }
