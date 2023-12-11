@@ -5,6 +5,7 @@ import (
 	"pusat-rumah-lelang-backend/common/interfaces"
 	"pusat-rumah-lelang-backend/models"
 	"pusat-rumah-lelang-backend/requests"
+	"strings"
 
 	"gorm.io/gorm"
 )
@@ -77,8 +78,21 @@ func (r *PropertyMysql) GetAll(req requests.PropertyPaginationRequest) ([]models
 		Limit(req.PageSize).
 		Offset(offset)
 
-	if req.Title != "" {
-		query = query.Where("title LIKE ?", "%"+req.Title+"%")
+	// Construct dynamic query based on available filters in the request
+	if req.Query != "" {
+		fields := []string{"title", "owner", "address", "building_area", "land_area", "latitude", "longitude", "property_tax_photo", "electricity_capacity", "water_source", "description"}
+
+		var conditions []string
+		var values []interface{}
+
+		for _, field := range fields {
+			conditions = append(conditions, field+" LIKE ?")
+			values = append(values, "%"+req.Query+"%")
+		}
+
+		if len(conditions) > 0 {
+			query = query.Where(strings.Join(conditions, " OR "), values...)
+		}
 	}
 
 	if err := query.

@@ -1,7 +1,7 @@
 package requests
 
 type PropertyPaginationRequest struct {
-	Title    string `json:"title"`
+	Query    string `json:"query"`
 	Page     int    `json:"page"`
 	PageSize int    `json:"page_size"`
 }

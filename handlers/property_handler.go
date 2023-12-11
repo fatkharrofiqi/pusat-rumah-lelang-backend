@@ -67,7 +67,7 @@ func (h *PropertyHandler) GetAll(ctx *gin.Context) {
 	}
 
 	request := &requests.PropertyPaginationRequest{
-		Title:    ctx.DefaultQuery("title", ""),
+		Query:    ctx.DefaultQuery("query", ""),
 		Page:     pagination.Page,
 		PageSize: pagination.PageSize,
 	}
