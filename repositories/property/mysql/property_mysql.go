@@ -93,6 +93,7 @@ func (r *PropertyMysql) GetBySellingStatus(id int64, page, pageSize int) (proper
 		Preload("PhotoHouse").
 		Preload("PhotoCertificate").
 		Preload("RoadAccess").
+		Preload("Bank").
 		Limit(pageSize).
 		Offset(offset).
 		Find(&property).Error; err != nil {
