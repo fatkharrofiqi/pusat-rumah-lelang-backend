@@ -4,12 +4,17 @@ import (
 	"pusat-rumah-lelang-backend/common/interfaces"
 	"pusat-rumah-lelang-backend/models"
 	"pusat-rumah-lelang-backend/repositories/property/mysql"
+	"pusat-rumah-lelang-backend/requests"
 
 	"gorm.io/gorm"
 )
 
 type IPropertyRepository interface {
-	interfaces.IGenericResource[models.Property]
+	interfaces.IGetByIdGeneric[models.Property]
+	interfaces.ICreateGeneric[models.Property]
+	interfaces.IDeleteGeneric[models.Property]
+	interfaces.IUpdateGeneric[models.Property]
+	GetAll(req requests.PropertyPaginationRequest) ([]models.Property, error)
 	GetBySellingStatus(id int64, page, pageSize int) ([]models.Property, error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 	GetTotalByCategory(category string) (result []models.NameCount, err error)
@@ -35,8 +40,8 @@ func (r *PropertyRepository) Create(data *models.Property) error {
 	return r.mysql.Create(data)
 }
 
-func (r *PropertyRepository) GetAll(page, pageSize int) ([]models.Property, error) {
-	return r.mysql.GetAll(page, pageSize)
+func (r *PropertyRepository) GetAll(req requests.PropertyPaginationRequest) ([]models.Property, error) {
+	return r.mysql.GetAll(req)
 }
 
 func (r *PropertyRepository) GetById(id int64) (models.Property, error) {

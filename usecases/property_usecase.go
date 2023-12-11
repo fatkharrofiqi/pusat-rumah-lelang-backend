@@ -4,10 +4,15 @@ import (
 	"pusat-rumah-lelang-backend/common/interfaces"
 	"pusat-rumah-lelang-backend/models"
 	"pusat-rumah-lelang-backend/repositories/property"
+	"pusat-rumah-lelang-backend/requests"
 )
 
 type IPropertyUsecase interface {
-	interfaces.IGenericResource[models.Property]
+	interfaces.IGetByIdGeneric[models.Property]
+	interfaces.ICreateGeneric[models.Property]
+	interfaces.IDeleteGeneric[models.Property]
+	interfaces.IUpdateGeneric[models.Property]
+	GetAll(req requests.PropertyPaginationRequest) ([]models.Property, error)
 	GetBySellingStatus(id int64, page, pageSize int) ([]models.Property, error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 	GetTotalByCategory(category string) (result []models.NameCount, err error)
@@ -51,8 +56,8 @@ func (p *PropertyUsecase) Delete(id int64) error {
 	return nil
 }
 
-func (p *PropertyUsecase) GetAll(page, pageSize int) ([]models.Property, error) {
-	result, err := p.repo.GetAll(page, pageSize)
+func (p *PropertyUsecase) GetAll(req requests.PropertyPaginationRequest) ([]models.Property, error) {
+	result, err := p.repo.GetAll(req)
 	if err != nil {
 		return result, err
 	}

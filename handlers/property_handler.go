@@ -5,6 +5,7 @@ import (
 	"pusat-rumah-lelang-backend/common/interfaces"
 	"pusat-rumah-lelang-backend/helpers"
 	"pusat-rumah-lelang-backend/models"
+	"pusat-rumah-lelang-backend/requests"
 	"pusat-rumah-lelang-backend/usecases"
 
 	"github.com/gin-gonic/gin"
@@ -64,7 +65,14 @@ func (h *PropertyHandler) GetAll(ctx *gin.Context) {
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusInternalServerError, "Invalid param")
 	}
-	result, err := h.usecase.GetAll(pagination.Page, pagination.PageSize)
+
+	request := &requests.PropertyPaginationRequest{
+		Title:    ctx.DefaultQuery("title", ""),
+		Page:     pagination.Page,
+		PageSize: pagination.PageSize,
+	}
+
+	result, err := h.usecase.GetAll(*request)
 	if err != nil {
 		helpers.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return

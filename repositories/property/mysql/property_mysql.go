@@ -4,12 +4,17 @@ import (
 	"errors"
 	"pusat-rumah-lelang-backend/common/interfaces"
 	"pusat-rumah-lelang-backend/models"
+	"pusat-rumah-lelang-backend/requests"
 
 	"gorm.io/gorm"
 )
 
 type IPropertyMysql interface {
-	interfaces.IGenericResource[models.Property]
+	interfaces.IGetByIdGeneric[models.Property]
+	interfaces.ICreateGeneric[models.Property]
+	interfaces.IDeleteGeneric[models.Property]
+	interfaces.IUpdateGeneric[models.Property]
+	GetAll(req requests.PropertyPaginationRequest) ([]models.Property, error)
 	GetBySellingStatus(id int64, page, pageSize int) (property []models.Property, err error)
 	GetByLocation(latitude string, longitude string, radius string) ([]models.Property, error)
 	GetTotalByCategory(category string) (result []models.NameCount, err error)
@@ -58,17 +63,25 @@ func (r *PropertyMysql) Delete(id int64) error {
 	return r.db.Where("id = ?", id).Delete(data).Error
 }
 
-func (r *PropertyMysql) GetAll(page, pageSize int) ([]models.Property, error) {
+func (r *PropertyMysql) GetAll(req requests.PropertyPaginationRequest) ([]models.Property, error) {
 	var properties []models.Property
-	offset := (page - 1) * pageSize
+	offset := (req.Page - 1) * req.PageSize
 
-	if err := r.db.Preload("Bank").
+	query := r.db.
+		Table("properties").
+		Preload("Bank").
 		Preload("SellingStatus").
 		Preload("PhotoHouse").
 		Preload("PhotoCertificate").
 		Preload("RoadAccess").
-		Limit(pageSize).
-		Offset(offset).
+		Limit(req.PageSize).
+		Offset(offset)
+
+	if req.Title != "" {
+		query = query.Where("title LIKE ?", "%"+req.Title+"%")
+	}
+
+	if err := query.
 		Find(&properties).Error; err != nil {
 		return nil, err
 	}
