@@ -70,8 +70,11 @@ func (r *PropertyMysql) GetAll(req requests.PropertyPaginationRequest) ([]models
 
 	query := r.db.
 		Table("properties").
-		Preload("Bank").
+		Joins("JOIN banks ON properties.bank_id = banks.id").
+		Joins("JOIN selling_statuses ON properties.selling_status_id = selling_statuses.id").
+		Joins("JOIN road_accesses ON properties.road_access_id = road_accesses.id").
 		Preload("SellingStatus").
+		Preload("Bank").
 		Preload("PhotoHouse").
 		Preload("PhotoCertificate").
 		Preload("RoadAccess").
@@ -80,7 +83,7 @@ func (r *PropertyMysql) GetAll(req requests.PropertyPaginationRequest) ([]models
 
 	// Construct dynamic query based on available filters in the request
 	if req.Query != "" {
-		fields := []string{"title", "owner", "address", "building_area", "land_area", "latitude", "longitude", "property_tax_photo", "electricity_capacity", "water_source", "description"}
+		fields := []string{"title", "owner", "address", "building_area", "land_area", "latitude", "longitude", "property_tax_photo", "electricity_capacity", "water_source", "properties.description", "banks.name", "selling_statuses.name", "road_accesses.name"}
 
 		var conditions []string
 		var values []interface{}
