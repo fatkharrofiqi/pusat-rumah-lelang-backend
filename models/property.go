@@ -32,4 +32,6 @@ type Property struct {
 	Description         string              `gorm:"description" json:"description"`
 	PhotoHouse          []*PhotoHouse       `gorm:"photo_house" json:"photo_houses"`
 	PhotoCertificate    []*PhotoCertificate `gorm:"photo_certificate" json:"photo_certificates"`
+	CertificateID       *uint               `gorm:"certificate_id" json:"certificate_id"`
+	Certificate         *Certificate        `json:"certificate"`
 }

@@ -73,17 +73,35 @@ func (r *PropertyMysql) GetAll(req requests.PropertyPaginationRequest) ([]models
 		Joins("JOIN banks ON properties.bank_id = banks.id").
 		Joins("JOIN selling_statuses ON properties.selling_status_id = selling_statuses.id").
 		Joins("JOIN road_accesses ON properties.road_access_id = road_accesses.id").
+		Joins("JOIN certificates ON properties.certificate_id = certificates.id").
 		Preload("SellingStatus").
 		Preload("Bank").
 		Preload("PhotoHouse").
 		Preload("PhotoCertificate").
 		Preload("RoadAccess").
+		Preload("Certificate").
 		Limit(req.PageSize).
 		Offset(offset)
 
 	// Construct dynamic query based on available filters in the request
 	if req.Query != "" {
-		fields := []string{"title", "owner", "address", "building_area", "land_area", "latitude", "longitude", "property_tax_photo", "electricity_capacity", "water_source", "properties.description", "banks.name", "selling_statuses.name", "road_accesses.name"}
+		fields := []string{
+			"title",
+			"owner",
+			"address",
+			"building_area",
+			"land_area",
+			"latitude",
+			"longitude",
+			"property_tax_photo",
+			"electricity_capacity",
+			"water_source",
+			"properties.description",
+			"banks.name",
+			"selling_statuses.name",
+			"road_accesses.name",
+			"certificates.name",
+		}
 
 		var conditions []string
 		var values []interface{}
@@ -108,7 +126,14 @@ func (r *PropertyMysql) GetAll(req requests.PropertyPaginationRequest) ([]models
 
 func (r *PropertyMysql) GetById(id int64) (models.Property, error) {
 	property := models.Property{}
-	if err := r.db.Preload("SellingStatus").Preload("PhotoHouse").Preload("PhotoCertificate").Preload("RoadAccess").First(&property, id).Error; err != nil {
+	if err := r.db.
+		Preload("SellingStatus").
+		Preload("PhotoHouse").
+		Preload("PhotoCertificate").
+		Preload("RoadAccess").
+		Preload("Certificate").
+		Preload("Bank").
+		First(&property, id).Error; err != nil {
 		return property, err
 	}
 
@@ -124,6 +149,7 @@ func (r *PropertyMysql) GetBySellingStatus(id int64, page, pageSize int) (proper
 		Preload("PhotoCertificate").
 		Preload("RoadAccess").
 		Preload("Bank").
+		Preload("Certificate").
 		Limit(pageSize).
 		Offset(offset).
 		Find(&property).Error; err != nil {
@@ -157,6 +183,7 @@ func (r *PropertyMysql) GetByLocation(latitude string, longitude string, radius 
 		Preload("PhotoHouse").
 		Preload("PhotoCertificate").
 		Preload("RoadAccess").
+		Preload("Certificate").
 		Find(&properties).Error; err != nil {
 		return properties, err
 	}

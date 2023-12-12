@@ -9,6 +9,7 @@ import (
 // migrates table.
 func RunMigrations(db *gorm.DB) error {
 	return db.AutoMigrate(
+		&models.Certificate{},
 		&models.Bank{},
 		&models.SellingStatus{},
 		&models.Property{},
@@ -19,7 +20,9 @@ func RunMigrations(db *gorm.DB) error {
 }
 
 func DropTable(db *gorm.DB) error {
-	return db.Migrator().DropTable(&models.Bank{},
+	return db.Migrator().DropTable(
+		&models.Certificate{},
+		&models.Bank{},
 		&models.SellingStatus{},
 		&models.Property{},
 		&models.RoadAccess{},

@@ -14,7 +14,7 @@ import (
 
 func getValueFromRow(row []string, index int) string {
 	if len(row) > index {
-		return row[index]
+		return strings.Trim(row[index], "")
 	}
 	return ""
 }
@@ -72,25 +72,34 @@ func processWithData(db *gorm.DB, rows [][]string) error {
 
 		if area != "" {
 			areas = strings.Split(area, "/")
-			landArea = areas[0]
-			buildingArea = areas[1]
+			landArea = strings.Trim(areas[0], " ")
+			buildingArea = strings.Trim(areas[1], " ")
 		}
 		electricity_capacity := getValueFromRow(row, 13)
 		selling_status := getValueFromRow(row, 14)
-		description := getValueFromRow(row, 15)
+		certificate := getValueFromRow(row, 15)
+		description := getValueFromRow(row, 16)
 
 		priceFloat, err := strconv.ParseFloat(helpers.RemoveCommas(price), 64)
 		if err != nil {
 			panic(err)
 		}
 
-		bedroomInt, err := strconv.Atoi(bedroom)
-		if err != nil {
-			panic(err)
+		var bedroomInt int
+		if bedroom != "" {
+			bedroomInt, err = strconv.Atoi(bedroom)
+			if err != nil {
+				panic(err)
+			}
 		}
 
 		// Begin transaction block for database operations
 		if err := db.Transaction(func(tx *gorm.DB) error {
+			certificates := &models.Certificate{}
+			if err := tx.FirstOrCreate(&certificates, models.Certificate{Name: certificate, Description: certificate}).Error; err != nil {
+				return err
+			}
+
 			banks := &models.Bank{}
 			if err := tx.FirstOrCreate(&banks, models.Bank{Name: bank, Description: bank}).Error; err != nil {
 				return err
@@ -104,6 +113,16 @@ func processWithData(db *gorm.DB, rows [][]string) error {
 			roadAcess := models.RoadAccess{}
 			if err = tx.FirstOrCreate(&roadAcess, models.RoadAccess{Name: road_access, Description: road_access}).Error; err != nil {
 				return err
+			}
+
+			var sellingStatusID *uint
+			if selling_status != "" {
+				sellingStatusID = &sellingStatus.ID
+			}
+
+			var certificateID *uint
+			if selling_status != "" {
+				certificateID = &certificates.ID
 			}
 
 			if err = tx.Where(models.Property{Title: title, BankID: &banks.ID}).Assign(models.Property{
@@ -120,8 +139,9 @@ func processWithData(db *gorm.DB, rows [][]string) error {
 				LandArea:            landArea,
 				BuildingArea:        buildingArea,
 				ElectricityCapacity: electricity_capacity,
-				SellingStatusID:     &sellingStatus.ID,
+				SellingStatusID:     sellingStatusID,
 				Description:         description,
+				CertificateID:       certificateID,
 			}).FirstOrCreate(&models.Property{}).Error; err != nil {
 				return err
 			}
