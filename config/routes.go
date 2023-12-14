@@ -50,5 +50,10 @@ func InitRoute(handler *Handler) {
 		autoCompleteRoute.GET("/property", handler.autocomplete.GetComboProperty)
 	}
 
+	bannerRoute := r.Group("/banner")
+	{
+		bannerRoute.GET("/", handler.banner.GetAll)
+	}
+
 	r.Run(":" + constants.ServerPort)
 }

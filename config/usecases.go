@@ -8,6 +8,7 @@ type Usecase struct {
 	sellingStatus usecases.ISellingStatusUsecase
 	migrate       usecases.IMigrationUsecase
 	autocomplete  usecases.IAutocompleteUsecase
+	banner        usecases.IBannerUsecase
 }
 
 func InitUsecase(repo *Repository) *Usecase {
@@ -17,5 +18,6 @@ func InitUsecase(repo *Repository) *Usecase {
 		sellingStatus: usecases.NewSellingStatusUsecase(repo.sellingStatus),
 		migrate:       usecases.NewMigrationUsecase(repo.migrate),
 		autocomplete:  usecases.NewAutocompleteUsecase(repo.autocomplete),
+		banner:        usecases.NewBannerUsecase(),
 	}
 }
