@@ -1,6 +1,9 @@
 package config
 
-import "pusat-rumah-lelang-backend/usecases"
+import (
+	"pusat-rumah-lelang-backend/helpers"
+	"pusat-rumah-lelang-backend/usecases"
+)
 
 type Usecase struct {
 	property      usecases.IPropertyUsecase
@@ -11,9 +14,9 @@ type Usecase struct {
 	banner        usecases.IBannerUsecase
 }
 
-func InitUsecase(repo *Repository) *Usecase {
+func InitUsecase(repo *Repository, minio *helpers.MinioStorage) *Usecase {
 	return &Usecase{
-		property:      usecases.NewPropertyUsecase(repo.property),
+		property:      usecases.NewPropertyUsecase(repo.property, minio),
 		bank:          usecases.NewBankUsecase(repo.bank),
 		sellingStatus: usecases.NewSellingStatusUsecase(repo.sellingStatus),
 		migrate:       usecases.NewMigrationUsecase(repo.migrate),

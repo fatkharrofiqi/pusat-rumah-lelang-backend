@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
 	"pusat-rumah-lelang-backend/config"
+	"pusat-rumah-lelang-backend/constants"
 	"pusat-rumah-lelang-backend/helpers"
+	"pusat-rumah-lelang-backend/migrations"
 	"pusat-rumah-lelang-backend/models"
 	"strconv"
 	"strings"
@@ -23,6 +26,18 @@ func main() {
 	config.LoadEnv()
 	config.LoadConstant()
 	db := config.OpenDB()
+	minio, err := config.NewMinioStorage()
+	if err != nil {
+		panic(err.Error())
+	}
+
+	photoPaths, err := helpers.RetrieveFiles(filepath.Join(constants.RootDir, "data/photo"))
+	if err != nil {
+		panic(err.Error())
+	}
+
+	migrations.DropTable(db)
+	migrations.RunMigrations(db)
 
 	filePath := "data/prl-list-rumah.xlsx"
 	// Open the Excel file
@@ -43,7 +58,7 @@ func main() {
 	rows = rows[3:]
 	// Process each row
 
-	if err := processWithData(db, rows); err != nil {
+	if err := processWithData(db, rows, photoPaths, minio); err != nil {
 		fmt.Println("Error processing data with transaction:", err)
 		return
 	}
@@ -51,7 +66,12 @@ func main() {
 	fmt.Println("Data processed successfully with transaction!")
 }
 
-func processWithData(db *gorm.DB, rows [][]string) error {
+func upload(minio *helpers.MinioStorage, key string, index int, photoPath string) (filename string, err error) {
+	filename, err = minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join(constants.RootDir, "/data/photo", photoPath))
+	return
+}
+
+func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string, minio *helpers.MinioStorage) error {
 	for _, row := range rows {
 		// no := getValueFromRow(row, 0)
 		owner := getValueFromRow(row, 1)
@@ -125,6 +145,7 @@ func processWithData(db *gorm.DB, rows [][]string) error {
 				certificateID = &certificates.ID
 			}
 
+			property := &models.Property{}
 			if err = tx.Where(models.Property{Title: title, BankID: &banks.ID}).Assign(models.Property{
 				Title:               title,
 				Owner:               owner,
@@ -142,10 +163,21 @@ func processWithData(db *gorm.DB, rows [][]string) error {
 				SellingStatusID:     sellingStatusID,
 				Description:         description,
 				CertificateID:       certificateID,
-			}).FirstOrCreate(&models.Property{}).Error; err != nil {
+			}).FirstOrCreate(&property).Error; err != nil {
 				return err
 			}
 
+			for index, photoUrl := range photoPath[title] {
+				photoHouse := &models.PhotoHouse{}
+				nameFile, err := upload(minio, title, index, photoUrl)
+				if err != nil {
+					panic(err.Error())
+				}
+				tx.FirstOrCreate(&photoHouse, models.PhotoHouse{
+					PropertyID: property.ID,
+					PhotoUrl:   nameFile,
+				})
+			}
 			return nil
 		}); err != nil {
 			return err

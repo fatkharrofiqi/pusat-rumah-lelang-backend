@@ -2,18 +2,18 @@ package config
 
 import (
 	"log"
-	"os"
 	"path/filepath"
+	"pusat-rumah-lelang-backend/helpers"
 
 	"github.com/joho/godotenv"
 )
 
 func LoadEnv() {
-	dir, err := os.Getwd()
+	rootdir, err := helpers.GetRootDir()
 	if err != nil {
-		log.Fatal(err)
+		panic(err.Error())
 	}
-	environmentPath := filepath.Join(dir, ".env")
+	environmentPath := filepath.Join(rootdir, ".env")
 	envVariable := godotenv.Load(environmentPath)
 	if envVariable != nil {
 		log.Fatal("Error loading .env file")

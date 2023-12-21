@@ -1,7 +1,9 @@
 package usecases
 
 import (
+	"log"
 	"pusat-rumah-lelang-backend/common/interfaces"
+	"pusat-rumah-lelang-backend/helpers"
 	"pusat-rumah-lelang-backend/models"
 	"pusat-rumah-lelang-backend/repositories/property"
 	"pusat-rumah-lelang-backend/requests"
@@ -19,12 +21,14 @@ type IPropertyUsecase interface {
 }
 
 type PropertyUsecase struct {
-	repo property.IPropertyRepository
+	repo  property.IPropertyRepository
+	minio *helpers.MinioStorage
 }
 
-func NewPropertyUsecase(repo property.IPropertyRepository) IPropertyUsecase {
+func NewPropertyUsecase(repo property.IPropertyRepository, minio *helpers.MinioStorage) IPropertyUsecase {
 	return &PropertyUsecase{
-		repo: repo,
+		repo:  repo,
+		minio: minio,
 	}
 }
 
@@ -56,11 +60,26 @@ func (p *PropertyUsecase) Delete(id int64) error {
 	return nil
 }
 
+// Function to process photo URLs
+func processPhotoURLs(properties []models.Property, minio *helpers.MinioStorage) {
+	for i := range properties {
+		for j := range properties[i].PhotoHouse {
+			url, err := minio.GetFileURL(properties[i].PhotoHouse[j].PhotoUrl, 60)
+			if err != nil {
+				log.Fatalln(err)
+			}
+			properties[i].PhotoHouse[j].PhotoUrl = url
+		}
+	}
+}
+
 func (p *PropertyUsecase) GetAll(req requests.PropertyPaginationRequest) ([]models.Property, error) {
 	result, err := p.repo.GetAll(req)
 	if err != nil {
 		return result, err
 	}
+
+	processPhotoURLs(result, p.minio)
 
 	return result, nil
 }
