@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 	"errors"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -94,7 +95,10 @@ func (ms *MinioStorage) RemoveFile(objectName string) error {
 
 func (ms *MinioStorage) GetFileURL(objectName string, expiry int64) (string, error) {
 	// Generate a presigned URL for the object with expiry time.
-	presignedURL, err := ms.Client.PresignedGetObject(context.Background(), ms.BucketName, objectName, time.Duration(expiry)*time.Second, nil)
+	reqParams := make(url.Values)
+	reqParams.Set("response-content-type", "image/jpeg")
+	reqParams.Set("response-content-disposition", "inline; filename="+objectName)
+	presignedURL, err := ms.Client.PresignedGetObject(context.Background(), ms.BucketName, objectName, time.Duration(expiry)*time.Second, reqParams)
 	if err != nil {
 		return "", err
 	}
