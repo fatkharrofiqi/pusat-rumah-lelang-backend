@@ -8,6 +8,7 @@ import (
 	"pusat-rumah-lelang-backend/helpers"
 	"pusat-rumah-lelang-backend/migrations"
 	"pusat-rumah-lelang-backend/models"
+	"pusat-rumah-lelang-backend/seeder"
 	"strconv"
 	"strings"
 
@@ -38,6 +39,8 @@ func main() {
 
 	migrations.DropTable(db)
 	migrations.RunMigrations(db)
+
+	seeder.Seeds(db)
 
 	filePath := "data/prl-list-rumah.xlsx"
 	// Open the Excel file
