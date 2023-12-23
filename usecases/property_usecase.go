@@ -64,7 +64,7 @@ func (p *PropertyUsecase) Delete(id int64) error {
 func processPhotoURLs(properties []models.Property, minio *helpers.MinioStorage) {
 	for i := range properties {
 		for j := range properties[i].PhotoHouse {
-			properties[i].PhotoHouse[j].PhotoUrl = constants.MinioEndpoint + "/" + constants.BucketName + "/" + properties[i].PhotoHouse[j].PhotoUrl
+			properties[i].PhotoHouse[j].PhotoUrl = "https://" + constants.MinioEndpoint + "/" + constants.BucketName + "/" + properties[i].PhotoHouse[j].PhotoUrl
 		}
 	}
 }
