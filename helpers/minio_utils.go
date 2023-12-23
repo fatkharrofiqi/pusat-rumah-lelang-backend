@@ -38,7 +38,13 @@ func (ms *MinioStorage) UploadFile(objectName string, filePath string) (string, 
 	defer cancel()
 
 	// Upload the file using the custom object name.
-	_, err = ms.Client.PutObject(ctx, ms.BucketName, customObjectName, file, fileInfo.Size(), minio.PutObjectOptions{})
+	_, err = ms.Client.PutObject(ctx, ms.BucketName, customObjectName, file, fileInfo.Size(), minio.PutObjectOptions{
+		ContentType: "image/jpeg",
+		UserMetadata: map[string]string{
+			"x-amz-acl": "public-read", // Set the ACL to make the object publicly readable
+		},
+		ContentDisposition: "inline",
+	})
 	if err != nil {
 		return "", errors.New("Can't upload file with error: " + err.Error())
 	}

@@ -1,8 +1,8 @@
 package usecases
 
 import (
-	"log"
 	"pusat-rumah-lelang-backend/common/interfaces"
+	"pusat-rumah-lelang-backend/constants"
 	"pusat-rumah-lelang-backend/helpers"
 	"pusat-rumah-lelang-backend/models"
 	"pusat-rumah-lelang-backend/repositories/property"
@@ -64,11 +64,7 @@ func (p *PropertyUsecase) Delete(id int64) error {
 func processPhotoURLs(properties []models.Property, minio *helpers.MinioStorage) {
 	for i := range properties {
 		for j := range properties[i].PhotoHouse {
-			url, err := minio.GetFileURL(properties[i].PhotoHouse[j].PhotoUrl, 604800)
-			if err != nil {
-				log.Fatalln(err)
-			}
-			properties[i].PhotoHouse[j].PhotoUrl = url
+			properties[i].PhotoHouse[j].PhotoUrl = constants.MinioEndpoint + "/" + constants.BucketName + "/" + properties[i].PhotoHouse[j].PhotoUrl
 		}
 	}
 }
