@@ -62,7 +62,7 @@ func (p *PropertyUsecase) Delete(id int64) error {
 }
 
 // Function to process photo URLs
-func processPhotoURLs(properties []models.Property, minio *helpers.MinioStorage) {
+func processPhotoURLs(properties []models.Property) {
 	for i := range properties {
 		for j := range properties[i].PhotoHouse {
 			properties[i].PhotoHouse[j].PhotoUrl = "https://" + constants.MinioEndpoint + "/" + constants.BucketName + "/" + strings.ReplaceAll(properties[i].PhotoHouse[j].PhotoUrl, " ", "%20")
@@ -76,7 +76,7 @@ func (p *PropertyUsecase) GetAll(req requests.PropertyPaginationRequest) ([]mode
 		return result, err
 	}
 
-	processPhotoURLs(result, p.minio)
+	processPhotoURLs(result)
 
 	return result, nil
 }
@@ -86,7 +86,9 @@ func (p *PropertyUsecase) GetById(id int64) (models.Property, error) {
 	if err != nil {
 		return result, err
 	}
-
+	for index, photo := range result.PhotoHouse {
+		result.PhotoHouse[index].PhotoUrl = "https://" + constants.MinioEndpoint + "/" + constants.BucketName + "/" + strings.ReplaceAll(photo.PhotoUrl, " ", "%20")
+	}
 	return result, nil
 }
 
@@ -96,6 +98,8 @@ func (p *PropertyUsecase) GetBySellingStatus(id int64, page, pageSize int) ([]mo
 		return results, err
 	}
 
+	processPhotoURLs(results)
+
 	return results, nil
 }
 
@@ -104,6 +108,8 @@ func (p *PropertyUsecase) GetByLocation(latitude string, longitude string, radiu
 	if err != nil {
 		return result, err
 	}
+
+	processPhotoURLs(result)
 
 	return result, nil
 }
