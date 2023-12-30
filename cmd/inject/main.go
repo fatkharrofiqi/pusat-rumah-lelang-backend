@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"path/filepath"
-	"pusat-rumah-lelang-backend/config"
-	"pusat-rumah-lelang-backend/constants"
-	"pusat-rumah-lelang-backend/helpers"
-	"pusat-rumah-lelang-backend/migrations"
-	"pusat-rumah-lelang-backend/models"
-	"pusat-rumah-lelang-backend/seeder"
+	"pusat-rumah-lelang-backend/db/seeder"
+	"pusat-rumah-lelang-backend/internal/config"
+	"pusat-rumah-lelang-backend/internal/helper"
+	"pusat-rumah-lelang-backend/internal/migrations"
+	"pusat-rumah-lelang-backend/internal/model"
 	"strconv"
 	"strings"
 
@@ -24,15 +23,15 @@ func getValueFromRow(row []string, index int) string {
 }
 
 func main() {
-	config.LoadEnv()
-	config.LoadConstant()
-	db := config.OpenDB()
-	minio, err := config.NewMinioStorage()
+	viperConfig := config.NewViper()
+	log := config.NewLogger(viperConfig)
+	db := config.NewDatabase(viperConfig, log)
+	minio, err := config.NewMinioStorage(viperConfig)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	photoPaths, err := helpers.RetrieveFiles(filepath.Join(constants.RootDir, "data/photo"))
+	photoPaths, err := helper.RetrieveFiles(filepath.Join("", "data/photo"))
 	if err != nil {
 		panic(err.Error())
 	}
@@ -69,12 +68,12 @@ func main() {
 	fmt.Println("Data processed successfully with transaction!")
 }
 
-func upload(minio *helpers.MinioStorage, key string, index int, photoPath string) (filename string, err error) {
-	filename, err = minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join(constants.RootDir, "/data/photo", photoPath))
+func upload(minio *helper.MinioStorage, key string, index int, photoPath string) (filename string, err error) {
+	filename, err = minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join("RootDir", "/data/photo", photoPath))
 	return
 }
 
-func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string, minio *helpers.MinioStorage) error {
+func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string, minio *helper.MinioStorage) error {
 	for _, row := range rows {
 		// no := getValueFromRow(row, 0)
 		owner := getValueFromRow(row, 1)
@@ -103,7 +102,7 @@ func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string
 		certificate := getValueFromRow(row, 15)
 		description := getValueFromRow(row, 16)
 
-		priceFloat, err := strconv.ParseFloat(helpers.RemoveCommas(price), 64)
+		priceFloat, err := strconv.ParseFloat(helper.RemoveCommas(price), 64)
 		if err != nil {
 			panic(err)
 		}
@@ -118,23 +117,23 @@ func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string
 
 		// Begin transaction block for database operations
 		if err := db.Transaction(func(tx *gorm.DB) error {
-			certificates := &models.Certificate{}
-			if err := tx.FirstOrCreate(&certificates, models.Certificate{Name: certificate, Description: certificate}).Error; err != nil {
+			certificates := &model.Certificate{}
+			if err := tx.FirstOrCreate(&certificates, model.Certificate{Name: certificate, Description: certificate}).Error; err != nil {
 				return err
 			}
 
-			banks := &models.Bank{}
-			if err := tx.FirstOrCreate(&banks, models.Bank{Name: bank, Description: bank}).Error; err != nil {
+			banks := &model.Bank{}
+			if err := tx.FirstOrCreate(&banks, model.Bank{Name: bank, Description: bank}).Error; err != nil {
 				return err
 			}
 
-			sellingStatus := &models.SellingStatus{}
-			if err = tx.FirstOrCreate(&sellingStatus, models.SellingStatus{Name: selling_status}).Error; err != nil {
+			sellingStatus := &model.SellingStatus{}
+			if err = tx.FirstOrCreate(&sellingStatus, model.SellingStatus{Name: selling_status}).Error; err != nil {
 				return err
 			}
 
-			roadAcess := models.RoadAccess{}
-			if err = tx.FirstOrCreate(&roadAcess, models.RoadAccess{Name: road_access, Description: road_access}).Error; err != nil {
+			roadAcess := model.RoadAccess{}
+			if err = tx.FirstOrCreate(&roadAcess, model.RoadAccess{Name: road_access, Description: road_access}).Error; err != nil {
 				return err
 			}
 
@@ -148,8 +147,8 @@ func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string
 				certificateID = &certificates.ID
 			}
 
-			property := &models.Property{}
-			if err = tx.Where(models.Property{Title: title, BankID: &banks.ID}).Assign(models.Property{
+			property := &model.Property{}
+			if err = tx.Where(model.Property{Title: title, BankID: &banks.ID}).Assign(model.Property{
 				Title:               title,
 				Owner:               owner,
 				Price:               priceFloat,
@@ -171,12 +170,12 @@ func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string
 			}
 
 			for index, photoUrl := range photoPath[title] {
-				photoHouse := &models.PhotoHouse{}
+				photoHouse := &model.PhotoHouse{}
 				nameFile, err := upload(minio, title, index, photoUrl)
 				if err != nil {
 					panic(err.Error())
 				}
-				tx.FirstOrCreate(&photoHouse, models.PhotoHouse{
+				tx.FirstOrCreate(&photoHouse, model.PhotoHouse{
 					PropertyID: property.ID,
 					PhotoUrl:   nameFile,
 				})

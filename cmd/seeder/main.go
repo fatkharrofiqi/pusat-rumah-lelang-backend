@@ -1,15 +1,15 @@
 package main
 
 import (
-	"pusat-rumah-lelang-backend/config"
-	"pusat-rumah-lelang-backend/migrations"
-	"pusat-rumah-lelang-backend/seeder"
+	"pusat-rumah-lelang-backend/db/seeder"
+	"pusat-rumah-lelang-backend/internal/config"
+	"pusat-rumah-lelang-backend/internal/migrations"
 )
 
 func main() {
-	config.LoadEnv()
-	config.LoadConstant()
-	db := config.OpenDB()
+	viperConfig := config.NewViper()
+	log := config.NewLogger(viperConfig)
+	db := config.NewDatabase(viperConfig, log)
 
 	migrations.DropTable(db)
 	migrations.RunMigrations(db)

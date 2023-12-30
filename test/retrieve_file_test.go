@@ -2,7 +2,7 @@ package test
 
 import (
 	"fmt"
-	"pusat-rumah-lelang-backend/helpers"
+	"pusat-rumah-lelang-backend/internal/helper"
 	"testing"
 )
 
@@ -11,7 +11,7 @@ func TestRetriveFile(t *testing.T) {
 	var filePaths map[string][]string
 	var err error
 	t.Run("RetrieveFile", func(t *testing.T) {
-		filePaths, err = helpers.RetrieveFiles(photoPath)
+		filePaths, err = helper.RetrieveFiles(photoPath)
 		if err != nil {
 			panic(err.Error())
 		}

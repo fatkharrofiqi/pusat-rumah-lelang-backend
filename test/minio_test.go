@@ -3,17 +3,17 @@ package test
 import (
 	"fmt"
 	"path/filepath"
-	"pusat-rumah-lelang-backend/config"
-	"pusat-rumah-lelang-backend/constants"
-	"pusat-rumah-lelang-backend/helpers"
+	"pusat-rumah-lelang-backend/internal/config"
+	"pusat-rumah-lelang-backend/internal/helper"
 	"sync"
 	"testing"
 
 	"github.com/k0kubun/pp/v3"
 )
 
-func setup() (minio *helpers.MinioStorage, err error) {
-	minio, err = config.NewMinioStorage()
+func setup() (minio *helper.MinioStorage, err error) {
+	viperConfig := config.NewViper()
+	minio, err = config.NewMinioStorage(viperConfig)
 	if err != nil {
 		pp.Println("Error creating minio storage", err.Error())
 	}
@@ -21,10 +21,10 @@ func setup() (minio *helpers.MinioStorage, err error) {
 	return
 }
 
-func upload(wg *sync.WaitGroup, minio *helpers.MinioStorage, key string, index int, photoPath string) error {
+func upload(wg *sync.WaitGroup, minio *helper.MinioStorage, key string, index int, photoPath string) error {
 	wg.Add(1)
 	defer wg.Done()
-	namefile, err := minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join(constants.RootDir, "/data/photo", photoPath))
+	namefile, err := minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join("", "/data/photo", photoPath))
 	if err != nil {
 		return err
 	}
@@ -33,15 +33,13 @@ func upload(wg *sync.WaitGroup, minio *helpers.MinioStorage, key string, index i
 }
 
 func TestUploadMinio(t *testing.T) {
-	config.LoadEnv()
-	config.LoadConstant()
 	minio, err := setup()
 	if err != nil {
 		pp.Fatal(err.Error())
 	}
 
 	t.Run("upload", func(t *testing.T) {
-		photosPaths, err := helpers.RetrieveFiles(filepath.Join(constants.RootDir + "/data/photo"))
+		photosPaths, err := helper.RetrieveFiles(filepath.Join("" + "/data/photo"))
 		if err != nil {
 			pp.Fatal(err.Error())
 		}
