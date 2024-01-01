@@ -23,7 +23,7 @@ type BootstrapConfig struct {
 
 func Bootstrap(config *BootstrapConfig) {
 	repository := http.InitRepository(config.DB, config.Log)
-	usecase := http.InitUsecase(repository, config.DB, config.Log)
+	usecase := http.InitUsecase(repository, config.DB, config.Log, config.Config)
 	handler := http.InitHandler(usecase, config.Log)
 
 	routeConfig := &route.RouteConfig{

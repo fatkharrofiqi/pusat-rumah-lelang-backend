@@ -138,7 +138,7 @@ func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
 	}
 
 	request := &request.GetBySellingStatusRequest{}
-	if err := ctx.ShouldBindJSON(request); err != nil {
+	if err := ctx.ShouldBind(request); err != nil {
 		helper.ErrorResponse(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -154,7 +154,7 @@ func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
 
 func (h *PropertyHandler) GetByLocation(c *gin.Context) {
 	request := &request.GetByLocationRequest{}
-	if err := c.ShouldBindJSON(request); err != nil {
+	if err := c.ShouldBind(request); err != nil {
 		helper.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}

@@ -30,7 +30,7 @@ func (repo *AutocompletePropertyRepository) GetComboProperty(db *gorm.DB, reques
 		query = query.Where("title LIKE ?", "%"+request.Title+"%")
 	}
 
-	if err := query.Scan(autoCompleteProperties).Error; err != nil {
+	if err := query.Scan(&autoCompleteProperties).Error; err != nil {
 		repo.Log.WithError(err).Error("failed to get autocomplete property repository")
 		return autoCompleteProperties, err
 	}

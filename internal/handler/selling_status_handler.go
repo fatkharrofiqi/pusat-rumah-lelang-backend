@@ -44,7 +44,7 @@ func (h *SellingStatusHandler) Create(ctx *gin.Context) {
 
 func (h *SellingStatusHandler) GetAll(ctx *gin.Context) {
 	getAllSellingStatus := &request.GetAllSellingStatusRequest{}
-	if err := ctx.ShouldBindJSON(getAllSellingStatus); err != nil {
+	if err := ctx.ShouldBind(getAllSellingStatus); err != nil {
 		helper.ErrorResponse(ctx, http.StatusInternalServerError, "Invalid param")
 		return
 	}

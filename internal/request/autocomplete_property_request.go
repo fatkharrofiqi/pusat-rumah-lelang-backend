@@ -1,7 +1,7 @@
 package request
 
 type GetComboPropertyRequest struct {
-	Title string `json:"title"`
+	Title string `json:"title" form:"title"`
 	Page  int    `json:"page" form:"page"`
 	Size  int    `json:"size" form:"size"`
 }

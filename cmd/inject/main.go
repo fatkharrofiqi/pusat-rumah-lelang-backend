@@ -69,7 +69,7 @@ func main() {
 }
 
 func upload(minio *helper.MinioStorage, key string, index int, photoPath string) (filename string, err error) {
-	filename, err = minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join("RootDir", "/data/photo", photoPath))
+	filename, err = minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join(helper.GetRootDir(), "/data/photo", photoPath))
 	return
 }
 

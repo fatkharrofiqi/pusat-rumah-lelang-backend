@@ -23,7 +23,7 @@ func NewAutocompleteHandler(autocompletePropertyUsecase usecase.IAutocompletePro
 
 func (h *AutocompleteHandler) GetComboProperty(c *gin.Context) {
 	request := &request.GetComboPropertyRequest{}
-	if err := c.ShouldBindJSON(request); err != nil {
+	if err := c.ShouldBind(request); err != nil {
 		helper.ErrorResponse(c, http.StatusInternalServerError, "invalid params pagination")
 		return
 	}

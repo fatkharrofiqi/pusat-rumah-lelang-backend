@@ -24,7 +24,7 @@ func setup() (minio *helper.MinioStorage, err error) {
 func upload(wg *sync.WaitGroup, minio *helper.MinioStorage, key string, index int, photoPath string) error {
 	wg.Add(1)
 	defer wg.Done()
-	namefile, err := minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join("", "/data/photo", photoPath))
+	namefile, err := minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join(helper.GetRootDir(), "/data/photo", photoPath))
 	if err != nil {
 		return err
 	}

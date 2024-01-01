@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
 
@@ -26,13 +27,15 @@ type PropertyUsecase struct {
 	PropertyRepository repository.IPropertyRepository
 	DB                 *gorm.DB
 	Log                *logrus.Logger
+	Config             *viper.Viper
 }
 
-func NewPropertyUsecase(db *gorm.DB, repo repository.IPropertyRepository, log *logrus.Logger) IPropertyUsecase {
+func NewPropertyUsecase(db *gorm.DB, repo repository.IPropertyRepository, log *logrus.Logger, config *viper.Viper) IPropertyUsecase {
 	return &PropertyUsecase{
 		DB:                 db,
 		PropertyRepository: repo,
 		Log:                log,
+		Config:             config,
 	}
 }
 
@@ -73,10 +76,11 @@ func (p *PropertyUsecase) Delete(c *gin.Context, id int64) error {
 }
 
 // Function to process photo URLs
-func processPhotoURLs(properties []*model.Property) {
+func (p *PropertyUsecase) processPhotoURLs(properties []*model.Property) {
+	url := p.Config.GetString("MINIO_ENDPOINT_PROTOCOL") + "://" + p.Config.GetString("MINIO_ENDPOINT") + "/" + p.Config.GetString("MINIO_BUCKET") + "/"
 	for i := range properties {
 		for j := range properties[i].PhotoHouse {
-			properties[i].PhotoHouse[j].PhotoUrl = "https://" + "MinioEndpoint" + "/" + "BucketName" + "/" + strings.ReplaceAll(properties[i].PhotoHouse[j].PhotoUrl, " ", "%20")
+			properties[i].PhotoHouse[j].PhotoUrl = url + strings.ReplaceAll(properties[i].PhotoHouse[j].PhotoUrl, " ", "%20")
 		}
 	}
 }
@@ -87,7 +91,7 @@ func (p *PropertyUsecase) GetAll(c *gin.Context, req *request.GetAllPropertyRequ
 		p.Log.WithError(err).Error("failed to get all category")
 		return
 	}
-	processPhotoURLs(result)
+	p.processPhotoURLs(result)
 	return
 }
 
@@ -109,7 +113,7 @@ func (p *PropertyUsecase) GetBySellingStatus(c *gin.Context, id int64, request *
 		p.Log.WithError(err).Error("failed to get selling by status")
 		return
 	}
-	processPhotoURLs(results)
+	p.processPhotoURLs(results)
 	return
 }
 
@@ -119,6 +123,6 @@ func (p *PropertyUsecase) GetByLocation(c *gin.Context, request *request.GetByLo
 		p.Log.WithError(err).Error("failed to get by location")
 		return
 	}
-	processPhotoURLs(result)
+	p.processPhotoURLs(result)
 	return
 }

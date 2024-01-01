@@ -8,9 +8,6 @@ import (
 )
 
 func TestRootDir(t *testing.T) {
-	rootdir, err := helper.GetRootDir()
-	if err != nil {
-		panic(err.Error())
-	}
+	rootdir := helper.GetRootDir()
 	pp.Println(rootdir)
 }
