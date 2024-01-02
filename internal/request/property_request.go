@@ -26,14 +26,19 @@ type GetAllPropertyRequest struct {
 }
 
 type GetBySellingStatusRequest struct {
-	Page int `form:"page,default=1"`
-	Size int `form:"size,default=10"`
+	Latitude  string `form:"latitude"`
+	Longitude string `form:"longitude"`
+	Radius    string `form:"radius"`
+	Page      int    `form:"page,default=1"`
+	Size      int    `form:"size,default=10"`
 }
 
 type GetByLocationRequest struct {
 	Latitude  string `form:"latitude" validate:"required"`
 	Longitude string `form:"longitude" validate:"required"`
 	Radius    string `form:"radius" validate:"required"`
+	Page      int    `form:"page,default=1"`
+	Size      int    `form:"size,default=10"`
 }
 
 type SearchPropertyRequest struct {

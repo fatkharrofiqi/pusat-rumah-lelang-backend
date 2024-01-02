@@ -143,7 +143,29 @@ func (r *PropertyRepository) GetById(db *gorm.DB, id int64) (property *model.Pro
 
 func (r *PropertyRepository) GetBySellingStatus(db *gorm.DB, id int64, request *request.GetBySellingStatusRequest) (property []*model.Property, err error) {
 	offset := (request.Page - 1) * request.Size
-	if err := db.
+	query := db
+	if request.Latitude != "" && request.Longitude != "" && request.Radius != "" {
+		sql := `SELECT
+							*,
+							(
+								6371 *
+								acos(
+									cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) +
+										sin(radians(?)) * sin(radians(latitude))
+								)
+							) as distance
+						FROM
+							properties p
+						WHERE 
+							p.selling_status_id = ?
+						HAVING
+							distance <= ?
+						ORDER BY
+							distance asc
+						`
+		query = db.Raw(sql, request.Latitude, request.Longitude, request.Latitude, id, request.Radius)
+	}
+	if err := query.
 		Where("selling_status_id = ?", id).
 		Preload("SellingStatus").
 		Preload("PhotoHouse").
@@ -162,6 +184,7 @@ func (r *PropertyRepository) GetBySellingStatus(db *gorm.DB, id int64, request *
 }
 
 func (r *PropertyRepository) GetByLocation(db *gorm.DB, request *request.GetByLocationRequest) (properties []*model.Property, err error) {
+	offset := (request.Page - 1) * request.Size
 	sql := `SELECT
 						*,
 						(
@@ -185,6 +208,8 @@ func (r *PropertyRepository) GetByLocation(db *gorm.DB, request *request.GetByLo
 		Preload("PhotoCertificate").
 		Preload("RoadAccess").
 		Preload("Certificate").
+		Limit(request.Size).
+		Offset(offset).
 		Find(&properties).Error; err != nil {
 		r.Log.WithError(err).Error("failed to get properties by location")
 		return properties, err
