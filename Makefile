@@ -1,9 +1,9 @@
 
 build:
-	go build -o cmd/web/main
+	go build -o main cmd/web/main
 	./main
 
 pull-build:
 	git pull
-	go build -o cmd/web/main
+	go build -o main cmd/web/main.go
 	./main
