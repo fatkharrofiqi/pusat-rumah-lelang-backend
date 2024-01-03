@@ -2,6 +2,10 @@ package helper
 
 import (
 	"fmt"
+	"image"
+	_ "image/jpeg" // JPEG format support
+	_ "image/png"  // PNG format support
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -31,4 +35,24 @@ func RetrieveFiles(root string) (map[string][]string, error) {
 	}
 
 	return filePaths, nil
+}
+
+func GetSize(filePath string) (width int, height int) {
+	// Open the image file
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	defer file.Close()
+	// Decode the image file
+	img, _, err := image.Decode(file)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	// Get the dimensions (width and height) of the image
+	bounds := img.Bounds()
+	width = bounds.Dx()  // Width of the image
+	height = bounds.Dy() // Height of the image
+	return
 }

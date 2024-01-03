@@ -31,7 +31,15 @@ func main() {
 		panic(err.Error())
 	}
 
-	photoPaths, err := helper.RetrieveFiles(filepath.Join("", "data/photo"))
+	photoPaths, err := helper.RetrieveFiles("data/photo")
+	if err != nil {
+		panic(err.Error())
+	}
+	thumnailPath, err := helper.RetrieveFiles("data/850 x 900")
+	if err != nil {
+		panic(err.Error())
+	}
+	coverPath, err := helper.RetrieveFiles("data/850 x 500")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -60,7 +68,7 @@ func main() {
 	rows = rows[3:]
 	// Process each row
 
-	if err := processWithData(db, rows, photoPaths, minio); err != nil {
+	if err := processWithData(db, rows, photoPaths, thumnailPath, coverPath, minio); err != nil {
 		fmt.Println("Error processing data with transaction:", err)
 		return
 	}
@@ -68,12 +76,12 @@ func main() {
 	fmt.Println("Data processed successfully with transaction!")
 }
 
-func upload(minio *helper.MinioStorage, key string, index int, photoPath string) (filename string, err error) {
-	filename, err = minio.UploadFile(fmt.Sprintf("%s/%s/%d", "photo_house", key, index), filepath.Join(helper.GetRootDir(), "/data/photo", photoPath))
+func upload(minio *helper.MinioStorage, key string, index string, photoPath string) (filename string, err error) {
+	filename, err = minio.UploadFile(fmt.Sprintf("%s/%s/%s", "photo_house", key, index), photoPath)
 	return
 }
 
-func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string, minio *helper.MinioStorage) error {
+func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string, thumnailPath map[string][]string, coverPath map[string][]string, minio *helper.MinioStorage) error {
 	for _, row := range rows {
 		// no := getValueFromRow(row, 0)
 		owner := getValueFromRow(row, 1)
@@ -171,13 +179,43 @@ func processWithData(db *gorm.DB, rows [][]string, photoPath map[string][]string
 
 			for index, photoUrl := range photoPath[title] {
 				photoHouse := &model.PhotoHouse{}
-				nameFile, err := upload(minio, title, index, photoUrl)
+				nameFile, err := upload(minio, title, "image"+strconv.Itoa(index), filepath.Join(helper.GetRootDir(), "/data/photo", photoUrl))
 				if err != nil {
 					panic(err.Error())
 				}
 				tx.FirstOrCreate(&photoHouse, model.PhotoHouse{
-					PropertyID: property.ID,
-					PhotoUrl:   nameFile,
+					PropertyID:  property.ID,
+					PhotoUrl:    nameFile,
+					IsThumbnail: false,
+					IsCover:     false,
+				})
+			}
+
+			for index, photoUrl := range thumnailPath[title] {
+				photoHouse := &model.PhotoHouse{}
+				nameFile, err := upload(minio, title, "thumbnail"+strconv.Itoa(index), filepath.Join(helper.GetRootDir(), "/data/850 x 900", photoUrl))
+				if err != nil {
+					panic(err.Error())
+				}
+				tx.FirstOrCreate(&photoHouse, model.PhotoHouse{
+					PropertyID:  property.ID,
+					PhotoUrl:    nameFile,
+					IsThumbnail: true,
+					IsCover:     false,
+				})
+			}
+
+			for index, photoUrl := range coverPath[title] {
+				photoHouse := &model.PhotoHouse{}
+				nameFile, err := upload(minio, title, "cover"+strconv.Itoa(index), filepath.Join(helper.GetRootDir(), "/data/850 x 500", photoUrl))
+				if err != nil {
+					panic(err.Error())
+				}
+				tx.FirstOrCreate(&photoHouse, model.PhotoHouse{
+					PropertyID:  property.ID,
+					PhotoUrl:    nameFile,
+					IsThumbnail: false,
+					IsCover:     true,
 				})
 			}
 			return nil
