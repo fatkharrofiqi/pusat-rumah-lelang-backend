@@ -35,7 +35,7 @@ func (r *SellingStatusRepository) GetAll(db *gorm.DB, request *request.GetAllSel
 	sellingStatuses := []*model.SellingStatus{}
 	offset := (request.Page - 1) * request.Size
 	if err := db.
-		Limit(request.Page).
+		Limit(request.Size).
 		Offset(offset).
 		Find(&sellingStatuses).Error; err != nil {
 		r.Log.WithError(err).Error("failed to get all selling status repositories")

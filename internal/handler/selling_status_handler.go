@@ -43,13 +43,13 @@ func (h *SellingStatusHandler) Create(ctx *gin.Context) {
 }
 
 func (h *SellingStatusHandler) GetAll(ctx *gin.Context) {
-	getAllSellingStatus := &request.GetAllSellingStatusRequest{}
-	if err := ctx.ShouldBind(getAllSellingStatus); err != nil {
+	request := &request.GetAllSellingStatusRequest{}
+	if err := ctx.ShouldBind(request); err != nil {
 		helper.ErrorResponse(ctx, http.StatusInternalServerError, "Invalid param")
 		return
 	}
 
-	result, err := h.SellingStatusUsecase.GetAll(ctx, getAllSellingStatus)
+	result, err := h.SellingStatusUsecase.GetAll(ctx, request)
 	if err != nil {
 		helper.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to fetch selling status")
 		return
