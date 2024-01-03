@@ -24,10 +24,12 @@ func Seeds(db *gorm.DB) {
 	}
 
 	sellingStatus := []model.SellingStatus{
-		{Name: "Suka Rela", Description: "Description for Suka Rela"},
 		{Name: "Lelang", Description: "Description for Lelang"},
+		{Name: "Suka Rela", Description: "Description for Suka Rela"},
 		{Name: "Ayda", Description: "Description for Ayda"},
-		{Name: "Rumah Biasa", Description: "Description for Rumah Biasa"},
+		{Name: "Rumah Baru", Description: "Description for Rumah Baru"},
+		{Name: "Rumah Bekas", Description: "Description for Rumah Bekas"},
+		{Name: "Jual Tanah", Description: "Description for Jual Tanah"},
 	}
 
 	if err := db.Create(&sellingStatus).Error; err != nil {
