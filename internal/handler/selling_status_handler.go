@@ -24,7 +24,7 @@ func NewSellingStatusHandler(sellingStatusUsecase usecase.ISellingStatusUsecase)
 }
 
 func (h *SellingStatusHandler) Total(ctx *gin.Context) {
-	helper.SuccessResponse(ctx, h.SellingStatusUsecase.Total(ctx), "Total selling status")
+	helper.SuccessResponse(ctx, h.SellingStatusUsecase.Total(ctx), nil)
 }
 
 func (h *SellingStatusHandler) Create(ctx *gin.Context) {
@@ -39,7 +39,7 @@ func (h *SellingStatusHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, createSellingStatus, "created")
+	helper.SuccessResponse(ctx, createSellingStatus, nil)
 }
 
 func (h *SellingStatusHandler) GetAll(ctx *gin.Context) {
@@ -55,7 +55,7 @@ func (h *SellingStatusHandler) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, result, "success")
+	helper.SuccessResponse(ctx, result, nil)
 }
 
 func (h *SellingStatusHandler) GetById(ctx *gin.Context) {
@@ -71,7 +71,7 @@ func (h *SellingStatusHandler) GetById(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, result, "Success")
+	helper.SuccessResponse(ctx, result, nil)
 }
 
 func (h *SellingStatusHandler) Update(ctx *gin.Context) {
@@ -92,7 +92,7 @@ func (h *SellingStatusHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, request, "Selling status updated successfully")
+	helper.SuccessResponse(ctx, request, nil)
 }
 
 func (h *SellingStatusHandler) Delete(ctx *gin.Context) {
@@ -107,5 +107,5 @@ func (h *SellingStatusHandler) Delete(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, nil, "Selling status successfully deleted")
+	helper.SuccessResponse(ctx, nil, nil)
 }

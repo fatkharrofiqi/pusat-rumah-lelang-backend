@@ -29,5 +29,5 @@ func (h *BannerHandler) GetAll(c *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(c, results, "Success")
+	helper.SuccessResponse(c, results, nil)
 }

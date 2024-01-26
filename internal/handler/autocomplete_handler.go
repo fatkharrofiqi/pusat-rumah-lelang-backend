@@ -34,5 +34,5 @@ func (h *AutocompleteHandler) GetComboProperty(c *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(c, result, "successfully retrieved combo property")
+	helper.SuccessResponse(c, result, nil)
 }

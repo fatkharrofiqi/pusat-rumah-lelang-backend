@@ -11,7 +11,7 @@ import (
 )
 
 type IBankUsecase interface {
-	GetAll(ctx *gin.Context, request *request.GetAllBankRequest) (resp []*model.Bank, err error)
+	GetAll(ctx *gin.Context, request *request.GetAllBankRequest) (resp []*model.Bank, total int64, err error)
 }
 
 type BankUsecase struct {
@@ -28,20 +28,20 @@ func NewBankUsecase(db *gorm.DB, bankRepository repository.IBankRepository, log 
 	}
 }
 
-func (b *BankUsecase) GetAll(ctx *gin.Context, request *request.GetAllBankRequest) (resp []*model.Bank, err error) {
+func (b *BankUsecase) GetAll(ctx *gin.Context, request *request.GetAllBankRequest) (resp []*model.Bank, total int64, err error) {
 	tx := b.DB.Begin()
 	defer tx.Rollback()
 
-	resp, err = b.BankRepository.GetAll(tx, request)
+	resp, total, err = b.BankRepository.GetAll(tx, request)
 	if err != nil {
 		b.Log.WithError(err).Error("error getting bank list")
-		return resp, err
+		return resp, 0, err
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		b.Log.WithError(err).Error("error getting bank list")
-		return resp, err
+		return resp, 0, err
 	}
 
-	return resp, err
+	return resp, total, err
 }

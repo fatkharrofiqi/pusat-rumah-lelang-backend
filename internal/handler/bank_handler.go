@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"math"
 	"net/http"
 	"pusat-rumah-lelang-backend/internal/common/interfaces"
 	"pusat-rumah-lelang-backend/internal/helper"
@@ -35,12 +36,19 @@ func (h *BankHandler) GetAll(c *gin.Context) {
 		return
 	}
 
-	result, err := h.BankUsecase.GetAll(c, request)
+	result, total, err := h.BankUsecase.GetAll(c, request)
 	if err != nil {
 		h.Log.WithError(err).Error("failed to retrieve list bank")
 		helper.ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	helper.SuccessResponse(c, result, "Bank successfully retrieved")
+	paging := &helper.PageMetadata{
+		Page:      request.Page,
+		Size:      request.Size,
+		TotalItem: total,
+		TotalPage: int64(math.Ceil(float64(total) / float64(request.Size))),
+	}
+
+	helper.SuccessResponse(c, result, paging)
 }

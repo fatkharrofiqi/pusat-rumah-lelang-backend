@@ -9,7 +9,7 @@ import (
 )
 
 type IBankRepository interface {
-	GetAll(db *gorm.DB, request *request.GetAllBankRequest) ([]*model.Bank, error)
+	GetAll(db *gorm.DB, request *request.GetAllBankRequest) ([]*model.Bank, int64, error)
 }
 
 type BankRepository struct {
@@ -23,7 +23,7 @@ func NewBankRepository(log *logrus.Logger) IBankRepository {
 	}
 }
 
-func (r *BankRepository) GetAll(db *gorm.DB, request *request.GetAllBankRequest) ([]*model.Bank, error) {
+func (r *BankRepository) GetAll(db *gorm.DB, request *request.GetAllBankRequest) ([]*model.Bank, int64, error) {
 	result := []*model.Bank{}
 	offset := (request.Page - 1) * request.Size
 	if err := db.
@@ -31,8 +31,13 @@ func (r *BankRepository) GetAll(db *gorm.DB, request *request.GetAllBankRequest)
 		Offset(offset).
 		Find(&result).Error; err != nil {
 		r.Log.WithError(err).Error("failed to get all bank repositories")
-		return result, err
+		return result, 0, err
 	}
 
-	return result, nil
+	var total int64 = 0
+	if err := db.Model(&model.Bank{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return result, total, nil
 }

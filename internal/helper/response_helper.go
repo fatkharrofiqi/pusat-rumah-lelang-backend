@@ -6,24 +6,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type StandardResponse struct {
-	Status  int         `json:"status"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+type PageMetadata struct {
+	Page      int   `json:"page"`
+	Size      int   `json:"size"`
+	TotalItem int64 `json:"total_item"`
+	TotalPage int64 `json:"total_page"`
 }
 
-func SuccessResponse(c *gin.Context, data interface{}, message string) {
+type StandardResponse struct {
+	Status int           `json:"status"`
+	Error  string        `json:"error,omitempty"`
+	Data   interface{}   `json:"data"`
+	Paging *PageMetadata `json:"paging,omitempty"`
+}
+
+func SuccessResponse(c *gin.Context, data interface{}, paging *PageMetadata) {
 	c.JSON(http.StatusOK, StandardResponse{
-		Status:  http.StatusOK,
-		Message: message,
-		Data:    data,
+		Status: http.StatusOK,
+		Data:   data,
+		Paging: paging,
 	})
 }
 
 func ErrorResponse(c *gin.Context, statusCode int, message string) {
 	c.JSON(statusCode, StandardResponse{
-		Status:  statusCode,
-		Message: message,
-		Data:    nil,
+		Status: statusCode,
+		Error:  message,
+		Data:   nil,
 	})
 }

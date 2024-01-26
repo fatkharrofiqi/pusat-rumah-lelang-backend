@@ -3,6 +3,7 @@ package route
 import (
 	"pusat-rumah-lelang-backend/internal/delivery/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,6 +13,20 @@ type RouteConfig struct {
 }
 
 func (c *RouteConfig) Setup() {
+	c.SetupMiddleware()
+	c.SetupGuestRoute()
+	c.SetupAuthRoute()
+}
+
+func (c *RouteConfig) SetupMiddleware() {
+	c.App.Use(cors.Default())
+}
+
+func (c *RouteConfig) SetupGuestRoute() {
+
+}
+
+func (c *RouteConfig) SetupAuthRoute() {
 	propertyRoutes := c.App.Group("/property")
 	{
 		propertyRoutes.POST("/", c.Handler.Property.Create)

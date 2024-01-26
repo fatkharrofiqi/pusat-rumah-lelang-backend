@@ -29,5 +29,5 @@ func (h *MigrationHandler) Migrate(c *gin.Context) {
 	}
 
 	h.MigrationUseecase.Migrate(c)
-	helper.SuccessResponse(c, nil, "Successfully migrate db")
+	helper.SuccessResponse(c, nil, nil)
 }

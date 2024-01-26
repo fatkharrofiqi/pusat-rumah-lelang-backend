@@ -44,7 +44,7 @@ func (h *PropertyHandler) GetTotalByCategory(ctx *gin.Context) {
 	}
 
 	response[category] = result
-	helper.SuccessResponse(ctx, response, "Success")
+	helper.SuccessResponse(ctx, response, nil)
 }
 
 func (h *PropertyHandler) Create(ctx *gin.Context) {
@@ -59,7 +59,7 @@ func (h *PropertyHandler) Create(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, request, "created")
+	helper.SuccessResponse(ctx, request, nil)
 }
 
 func (h *PropertyHandler) GetAll(ctx *gin.Context) {
@@ -75,7 +75,7 @@ func (h *PropertyHandler) GetAll(ctx *gin.Context) {
 		helper.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
 		return
 	}
-	helper.SuccessResponse(ctx, result, "success")
+	helper.SuccessResponse(ctx, result, nil)
 }
 
 func (h *PropertyHandler) GetById(ctx *gin.Context) {
@@ -91,7 +91,7 @@ func (h *PropertyHandler) GetById(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, result, "Success")
+	helper.SuccessResponse(ctx, result, nil)
 }
 
 func (h *PropertyHandler) Update(ctx *gin.Context) {
@@ -112,7 +112,7 @@ func (h *PropertyHandler) Update(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, property, "Property updated successfully")
+	helper.SuccessResponse(ctx, property, nil)
 }
 
 func (h *PropertyHandler) Delete(ctx *gin.Context) {
@@ -127,7 +127,7 @@ func (h *PropertyHandler) Delete(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, nil, "Property successfully deleted")
+	helper.SuccessResponse(ctx, nil, nil)
 }
 
 func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
@@ -149,7 +149,7 @@ func (h *PropertyHandler) GetBySellingStatus(ctx *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(ctx, result, "successfully retrieved")
+	helper.SuccessResponse(ctx, result, nil)
 }
 
 func (h *PropertyHandler) GetByLocation(c *gin.Context) {
@@ -165,5 +165,5 @@ func (h *PropertyHandler) GetByLocation(c *gin.Context) {
 		return
 	}
 
-	helper.SuccessResponse(c, results, "successfully retrieved")
+	helper.SuccessResponse(c, results, nil)
 }
