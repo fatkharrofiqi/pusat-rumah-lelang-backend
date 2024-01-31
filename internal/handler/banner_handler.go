@@ -25,7 +25,7 @@ func (h *BannerHandler) GetAll(c *gin.Context) {
 	results, err := h.usecase.GetAll(0, 0)
 
 	if err != nil {
-		helper.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+		helper.ErrorResponse(c, http.StatusInternalServerError, []string{err.Error()})
 		return
 	}
 

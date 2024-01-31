@@ -2,6 +2,14 @@ package repository
 
 import "gorm.io/gorm"
 
+type IRepository[T any] interface {
+	Create(db *gorm.DB, entity *T) error
+	Update(db *gorm.DB, entity *T) error
+	Delete(db *gorm.DB, entity *T) error
+	CountById(db *gorm.DB, id any) (int64, error)
+	FindById(db *gorm.DB, entity *T, id any) error
+}
+
 type Repository[T any] struct{}
 
 func (r *Repository[T]) Create(db *gorm.DB, entity *T) error {

@@ -15,7 +15,7 @@ type PageMetadata struct {
 
 type StandardResponse struct {
 	Status int           `json:"status"`
-	Error  string        `json:"error,omitempty"`
+	Error  []string      `json:"error,omitempty"`
 	Data   interface{}   `json:"data"`
 	Paging *PageMetadata `json:"paging,omitempty"`
 }
@@ -28,7 +28,7 @@ func SuccessResponse(c *gin.Context, data interface{}, paging *PageMetadata) {
 	})
 }
 
-func ErrorResponse(c *gin.Context, statusCode int, message string) {
+func ErrorResponse(c *gin.Context, statusCode int, message []string) {
 	c.JSON(statusCode, StandardResponse{
 		Status: statusCode,
 		Error:  message,

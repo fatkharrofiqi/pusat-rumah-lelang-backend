@@ -24,13 +24,13 @@ func NewAutocompleteHandler(autocompletePropertyUsecase usecase.IAutocompletePro
 func (h *AutocompleteHandler) GetComboProperty(c *gin.Context) {
 	request := &request.GetComboPropertyRequest{}
 	if err := c.ShouldBind(request); err != nil {
-		helper.ErrorResponse(c, http.StatusInternalServerError, "invalid params pagination")
+		helper.ErrorResponse(c, http.StatusInternalServerError, []string{"invalid params pagination"})
 		return
 	}
 
 	result, err := h.AutoCompletePropertyUsecase.GetComboProperty(c, request)
 	if err != nil {
-		helper.ErrorResponse(c, http.StatusInternalServerError, "failed to get combo property")
+		helper.ErrorResponse(c, http.StatusInternalServerError, []string{"failed to get combo property"})
 		return
 	}
 

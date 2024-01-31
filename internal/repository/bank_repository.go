@@ -9,6 +9,7 @@ import (
 )
 
 type IBankRepository interface {
+	IRepository[model.Bank]
 	GetAll(db *gorm.DB, request *request.GetAllBankRequest) ([]*model.Bank, int64, error)
 }
 
@@ -27,6 +28,7 @@ func (r *BankRepository) GetAll(db *gorm.DB, request *request.GetAllBankRequest)
 	result := []*model.Bank{}
 	offset := (request.Page - 1) * request.Size
 	if err := db.
+		Scopes(r.filterBank(request)).
 		Limit(request.Size).
 		Offset(offset).
 		Find(&result).Error; err != nil {
@@ -35,9 +37,20 @@ func (r *BankRepository) GetAll(db *gorm.DB, request *request.GetAllBankRequest)
 	}
 
 	var total int64 = 0
-	if err := db.Model(&model.Bank{}).Count(&total).Error; err != nil {
+	if err := db.Model(&model.Bank{}).Scopes(r.filterBank(request)).Count(&total).Error; err != nil {
 		return nil, 0, err
 	}
 
 	return result, total, nil
+}
+
+func (r *BankRepository) filterBank(request *request.GetAllBankRequest) func(tx *gorm.DB) *gorm.DB {
+	return func(tx *gorm.DB) *gorm.DB {
+		if name := request.Name; name != "" {
+			name = "%" + name + "%"
+			tx = tx.Where("name LIKE ?", name)
+		}
+
+		return tx
+	}
 }

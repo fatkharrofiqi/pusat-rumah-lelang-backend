@@ -24,7 +24,7 @@ func (h *MigrationHandler) Migrate(c *gin.Context) {
 	password := c.DefaultQuery("password", "")
 
 	if password != "" {
-		helper.ErrorResponse(c, http.StatusForbidden, "Forbidden")
+		helper.ErrorResponse(c, http.StatusForbidden, []string{"Forbidden"})
 		return
 	}
 

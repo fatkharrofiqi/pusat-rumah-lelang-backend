@@ -52,6 +52,9 @@ func (c *RouteConfig) SetupAuthRoute() {
 	bankRoutes := c.App.Group("/bank")
 	{
 		bankRoutes.GET("/", c.Handler.Bank.GetAll)
+		bankRoutes.POST("/", c.Handler.Bank.Create)
+		bankRoutes.PUT("/", c.Handler.Bank.Update)
+		bankRoutes.DELETE("/:id", c.Handler.Bank.Delete)
 	}
 
 	migrateRoute := c.App.Group("/migrate")

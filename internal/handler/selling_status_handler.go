@@ -30,12 +30,12 @@ func (h *SellingStatusHandler) Total(ctx *gin.Context) {
 func (h *SellingStatusHandler) Create(ctx *gin.Context) {
 	createSellingStatus := &request.CreateSellingStatusRequest{}
 	if err := ctx.ShouldBindJSON(createSellingStatus); err != nil {
-		helper.ErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		helper.ErrorResponse(ctx, http.StatusBadRequest, []string{err.Error()})
 		return
 	}
 
 	if err := h.SellingStatusUsecase.Create(ctx, createSellingStatus); err != nil {
-		helper.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		helper.ErrorResponse(ctx, http.StatusInternalServerError, []string{err.Error()})
 		return
 	}
 
@@ -45,13 +45,13 @@ func (h *SellingStatusHandler) Create(ctx *gin.Context) {
 func (h *SellingStatusHandler) GetAll(ctx *gin.Context) {
 	request := &request.GetAllSellingStatusRequest{}
 	if err := ctx.ShouldBind(request); err != nil {
-		helper.ErrorResponse(ctx, http.StatusInternalServerError, "Invalid param")
+		helper.ErrorResponse(ctx, http.StatusInternalServerError, []string{"Invalid param"})
 		return
 	}
 
 	result, err := h.SellingStatusUsecase.GetAll(ctx, request)
 	if err != nil {
-		helper.ErrorResponse(ctx, http.StatusInternalServerError, "Failed to fetch selling status")
+		helper.ErrorResponse(ctx, http.StatusInternalServerError, []string{"Failed to fetch selling status"})
 		return
 	}
 
@@ -61,13 +61,13 @@ func (h *SellingStatusHandler) GetAll(ctx *gin.Context) {
 func (h *SellingStatusHandler) GetById(ctx *gin.Context) {
 	sellingStatusID, err := helper.GetID(ctx)
 	if err != nil {
-		helper.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
+		helper.ErrorResponse(ctx, http.StatusBadRequest, []string{"Invalid ID"})
 		return
 	}
 
 	result, err := h.SellingStatusUsecase.GetById(ctx, int64(sellingStatusID))
 	if err != nil {
-		helper.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		helper.ErrorResponse(ctx, http.StatusInternalServerError, []string{err.Error()})
 		return
 	}
 
@@ -77,18 +77,18 @@ func (h *SellingStatusHandler) GetById(ctx *gin.Context) {
 func (h *SellingStatusHandler) Update(ctx *gin.Context) {
 	sellingStatusID, err := helper.GetID(ctx)
 	if err != nil {
-		helper.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
+		helper.ErrorResponse(ctx, http.StatusBadRequest, []string{"Invalid ID"})
 		return
 	}
 
 	request := &request.UpdateSellingStatusRequest{}
 	if err := ctx.ShouldBindJSON(request); err != nil {
-		helper.ErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		helper.ErrorResponse(ctx, http.StatusBadRequest, []string{err.Error()})
 		return
 	}
 
 	if err := h.SellingStatusUsecase.Update(ctx, int64(sellingStatusID), request); err != nil {
-		helper.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		helper.ErrorResponse(ctx, http.StatusInternalServerError, []string{err.Error()})
 		return
 	}
 
@@ -98,12 +98,12 @@ func (h *SellingStatusHandler) Update(ctx *gin.Context) {
 func (h *SellingStatusHandler) Delete(ctx *gin.Context) {
 	sellingStatusID, err := helper.GetID(ctx)
 	if err != nil {
-		helper.ErrorResponse(ctx, http.StatusBadRequest, "Invalid ID")
+		helper.ErrorResponse(ctx, http.StatusBadRequest, []string{"Invalid ID"})
 		return
 	}
 
 	if err := h.SellingStatusUsecase.Delete(ctx, int64(sellingStatusID)); err != nil {
-		helper.ErrorResponse(ctx, http.StatusInternalServerError, err.Error())
+		helper.ErrorResponse(ctx, http.StatusInternalServerError, []string{err.Error()})
 		return
 	}
 
