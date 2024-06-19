@@ -17,7 +17,7 @@ type IPropertyUsecase interface {
 	Create(c *gin.Context, request *request.CreatePropertyRequest) error
 	Update(c *gin.Context, id int64, request *request.UpdatePropertyRequest) error
 	Delete(c *gin.Context, id int64) error
-	GetAll(c *gin.Context, request *request.GetAllPropertyRequest) (result []*model.Property, err error)
+	GetAll(c *gin.Context, request *request.GetAllPropertyRequest) (result []*model.Property, total int64, err error)
 	GetById(c *gin.Context, id int64) (result *model.Property, err error)
 	GetBySellingStatus(c *gin.Context, id int64, request *request.GetBySellingStatusRequest) (result []*model.Property, err error)
 	GetByLocation(c *gin.Context, request *request.GetByLocationRequest) (result []*model.Property, err error)
@@ -85,8 +85,8 @@ func (p *PropertyUsecase) processPhotoURLs(properties []*model.Property) {
 	}
 }
 
-func (p *PropertyUsecase) GetAll(c *gin.Context, req *request.GetAllPropertyRequest) (result []*model.Property, err error) {
-	result, err = p.PropertyRepository.GetAll(p.DB.WithContext(c), req)
+func (p *PropertyUsecase) GetAll(c *gin.Context, req *request.GetAllPropertyRequest) (result []*model.Property, total int64, err error) {
+	result, total, err = p.PropertyRepository.GetAll(p.DB.WithContext(c), req)
 	if err != nil {
 		p.Log.WithError(err).Error("failed to get all category")
 		return

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"math"
 	"net/http"
 	"pusat-rumah-lelang-backend/internal/common/interfaces"
 	"pusat-rumah-lelang-backend/internal/helper"
@@ -70,12 +71,20 @@ func (h *PropertyHandler) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	result, err := h.PropertyUsecase.GetAll(ctx, request)
+	result, total, err := h.PropertyUsecase.GetAll(ctx, request)
 	if err != nil {
 		helper.ErrorResponse(ctx, http.StatusInternalServerError, []string{err.Error()})
 		return
 	}
-	helper.SuccessResponse(ctx, result, nil)
+
+	paging := &helper.PageMetadata{
+		Page:      request.Page,
+		Size:      request.Size,
+		TotalItem: total,
+		TotalPage: int64(math.Ceil(float64(total) / float64(request.Size))),
+	}
+
+	helper.SuccessResponse(ctx, result, paging)
 }
 
 func (h *PropertyHandler) GetById(ctx *gin.Context) {

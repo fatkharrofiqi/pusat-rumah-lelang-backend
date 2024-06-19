@@ -15,7 +15,7 @@ type IPropertyRepository interface {
 	Create(db *gorm.DB, request *request.CreatePropertyRequest) error
 	Update(db *gorm.DB, id int64, request *request.UpdatePropertyRequest) error
 	Delete(db *gorm.DB, id int64) error
-	GetAll(db *gorm.DB, request *request.GetAllPropertyRequest) (result []*model.Property, err error)
+	GetAll(db *gorm.DB, request *request.GetAllPropertyRequest) (result []*model.Property, total int64, err error)
 	GetById(db *gorm.DB, id int64) (result *model.Property, err error)
 	GetBySellingStatus(db *gorm.DB, id int64, request *request.GetBySellingStatusRequest) (result []*model.Property, err error)
 	GetByLocation(db *gorm.DB, request *request.GetByLocationRequest) (result []*model.Property, err error)
@@ -66,42 +66,21 @@ func (r *PropertyRepository) Delete(db *gorm.DB, id int64) error {
 	return db.Where("id = ?", id).Delete(data).Error
 }
 
-func (r *PropertyRepository) GetAll(db *gorm.DB, request *request.GetAllPropertyRequest) (properties []*model.Property, err error) {
+func (r *PropertyRepository) GetAll(db *gorm.DB, request *request.GetAllPropertyRequest) (properties []*model.Property, total int64, err error) {
 	offset := (request.Page - 1) * request.Size
 
-	query := db.
-		Table("properties").
+	query := db.Table("properties").
 		Joins("JOIN banks ON properties.bank_id = banks.id").
 		Joins("JOIN selling_statuses ON properties.selling_status_id = selling_statuses.id").
 		Joins("JOIN road_accesses ON properties.road_access_id = road_accesses.id").
-		Joins("JOIN certificates ON properties.certificate_id = certificates.id").
-		Preload("SellingStatus").
-		Preload("Bank").
-		Preload("PhotoHouse").
-		Preload("PhotoCertificate").
-		Preload("RoadAccess").
-		Preload("Certificate").
-		Limit(request.Size).
-		Offset(offset)
+		Joins("JOIN certificates ON properties.certificate_id = certificates.id")
 
-	// Construct dynamic query based on available filters in the request
+	// Apply dynamic query conditions
 	if request.Query != "" {
 		fields := []string{
-			"title",
-			"owner",
-			"address",
-			"building_area",
-			"land_area",
-			"latitude",
-			"longitude",
-			"property_tax_photo",
-			"electricity_capacity",
-			"water_source",
-			"properties.description",
-			"banks.name",
-			"selling_statuses.name",
-			"road_accesses.name",
-			"certificates.name",
+			"title", "owner", "address", "building_area", "land_area", "latitude", "longitude",
+			"property_tax_photo", "electricity_capacity", "water_source", "properties.description",
+			"banks.name", "selling_statuses.name", "road_accesses.name", "certificates.name",
 		}
 
 		var conditions []string
@@ -112,17 +91,28 @@ func (r *PropertyRepository) GetAll(db *gorm.DB, request *request.GetAllProperty
 			values = append(values, "%"+request.Query+"%")
 		}
 
-		if len(conditions) > 0 {
-			query = query.Where(strings.Join(conditions, " OR "), values...)
-		}
+		query = query.Where(strings.Join(conditions, " OR "), values...)
 	}
 
-	if err := query.
+	// Retrieve the total count based on the same dynamic conditions
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Apply pagination to the data retrieva
+	if err := query.Preload("SellingStatus").
+		Preload("Bank").
+		Preload("PhotoHouse").
+		Preload("PhotoCertificate").
+		Preload("RoadAccess").
+		Preload("Certificate").
+		Limit(request.Size).
+		Offset(offset).
 		Find(&properties).Error; err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return properties, nil
+	return properties, total, nil
 }
 
 func (r *PropertyRepository) GetById(db *gorm.DB, id int64) (property *model.Property, err error) {
